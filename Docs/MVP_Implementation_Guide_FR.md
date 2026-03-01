@@ -72,3 +72,15 @@ Le script vérifie structure, configs, classes critiques et tags.
   - RNG seedée par `(ShardId, RegionId, FrameWindow)`.
 - Anti-entropie Director:
   - contrôleurs PID sur inflation, violence, migration, densité spawn.
+
+
+## 7) Build + run automatisé
+Exécuter:
+```bash
+export UE_ROOT=/opt/UnrealEngine-5.3
+bash Scripts/build_and_run.sh --target editor
+```
+Variantes:
+- `--target game` : lance en mode jeu.
+- `--target server --run-args "-nosteam"` : lance serveur dédié.
+- `--config Shipping` : compile en Shipping.
