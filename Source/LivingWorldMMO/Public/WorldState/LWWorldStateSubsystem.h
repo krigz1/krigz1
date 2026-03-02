@@ -6,6 +6,7 @@
 #include "LWWorldStateSubsystem.generated.h"
 
 UCLASS(Config=Game, DefaultConfig)
+UCLASS()
 class LIVINGWORLDMMO_API ULWWorldStateSubsystem : public UWorldSubsystem
 {
     GENERATED_BODY()
