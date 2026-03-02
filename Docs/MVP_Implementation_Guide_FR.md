@@ -84,3 +84,12 @@ Variantes:
 - `--target game` : lance en mode jeu.
 - `--target server --run-args "-nosteam"` : lance serveur dédié.
 - `--config Shipping` : compile en Shipping.
+
+## 8) Intégration du Code Élisabeth (impératif)
+- La charte complète est stockée dans `Docs/Code_Elisabeth_V480_FR.md`.
+- `ULWDirectorSubsystem` applique une validation systémique avant émission d'événements globaux.
+- Les actions majeures (sévérité >= `MaxAutonomousSeverity`) sont bloquées côté autonomie et journalisées en attente de validation Créateur.
+- Configurable via `Config/DefaultGame.ini`:
+  - `bCodeElisabethEnabled=True`
+  - `MaxAutonomousSeverity=0.85`
+  - 

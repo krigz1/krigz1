@@ -5,6 +5,7 @@
 #include "WorldState/LWTypes.h"
 #include "LWWorldStateSubsystem.generated.h"
 
+UCLASS(Config=Game, DefaultConfig)
 UCLASS()
 class LIVINGWORLDMMO_API ULWWorldStateSubsystem : public UWorldSubsystem
 {
@@ -46,5 +47,7 @@ private:
     TArray<FString> EventJournal;
 
     int64 ServerFrame = 0;
+
+    UPROPERTY(EditAnywhere, Config, Category="LivingWorld|Persistence")
     FString SaveSlotName = TEXT("LivingWorld_MVP");
 };

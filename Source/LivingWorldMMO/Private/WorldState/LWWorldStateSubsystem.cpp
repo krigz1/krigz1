@@ -3,6 +3,18 @@
 #include "Kismet/GameplayStatics.h"
 #include "WorldState/LWWorldSaveGame.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogLWWorldState, Log, All);
+
+void ULWWorldStateSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+    Super::Initialize(Collection);
+
+    UWorld* World = GetWorld();
+    if (!World || World->GetNetMode() == NM_Client)
+    {
+        return;
+    }
+
 void ULWWorldStateSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
     Super::Initialize(Collection);
@@ -11,6 +23,12 @@ void ULWWorldStateSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void ULWWorldStateSubsystem::Deinitialize()
 {
+    UWorld* World = GetWorld();
+    if (World && World->GetNetMode() != NM_Client)
+    {
+        SaveSnapshot();
+    }
+
     SaveSnapshot();
     Super::Deinitialize();
 }
@@ -52,6 +70,27 @@ FLWWorldSnapshot ULWWorldStateSubsystem::BuildSnapshot() const
 
 void ULWWorldStateSubsystem::SaveSnapshot()
 {
+    UWorld* World = GetWorld();
+    if (!World || World->GetNetMode() == NM_Client)
+    {
+        return;
+    }
+
+    ULWWorldSaveGame* SaveGame = Cast<ULWWorldSaveGame>(UGameplayStatics::CreateSaveGameObject(ULWWorldSaveGame::StaticClass()));
+    if (!SaveGame)
+    {
+        UE_LOG(LogLWWorldState, Error, TEXT("Failed to allocate save object for slot '%s'"), *SaveSlotName);
+        return;
+    }
+
+    SaveGame->Snapshot = BuildSnapshot();
+    SaveGame->EventJournal = EventJournal;
+
+    const bool bSaved = UGameplayStatics::SaveGameToSlot(SaveGame, SaveSlotName, 0);
+    if (!bSaved)
+    {
+        UE_LOG(LogLWWorldState, Error, TEXT("SaveGameToSlot failed for slot '%s'"), *SaveSlotName);
+    }
     ULWWorldSaveGame* SaveGame = Cast<ULWWorldSaveGame>(UGameplayStatics::CreateSaveGameObject(ULWWorldSaveGame::StaticClass()));
     SaveGame->Snapshot = BuildSnapshot();
     SaveGame->EventJournal = EventJournal;
@@ -60,6 +99,12 @@ void ULWWorldStateSubsystem::SaveSnapshot()
 
 bool ULWWorldStateSubsystem::LoadSnapshot()
 {
+    UWorld* World = GetWorld();
+    if (!World || World->GetNetMode() == NM_Client)
+    {
+        return false;
+    }
+
     if (!UGameplayStatics::DoesSaveGameExist(SaveSlotName, 0))
     {
         return false;
@@ -68,6 +113,7 @@ bool ULWWorldStateSubsystem::LoadSnapshot()
     ULWWorldSaveGame* SaveGame = Cast<ULWWorldSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
     if (!SaveGame)
     {
+        UE_LOG(LogLWWorldState, Warning, TEXT("LoadGameFromSlot returned null for slot '%s'"), *SaveSlotName);
         return false;
     }
 

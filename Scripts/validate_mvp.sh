@@ -10,6 +10,11 @@ required_files=(
   "Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp"
   "Source/LivingWorldMMO/Private/Net/LWReplicationGraph.cpp"
   "Config/DefaultEngine.ini"
+
+  "Config/DefaultGame.ini"
+  "Config/Tags/GameplayTags.ini"
+  "Docs/MVP_Implementation_Guide_FR.md"
+  "Docs/Code_Elisabeth_V480_FR.md"
   "Config/Tags/GameplayTags.ini"
   "Docs/MVP_Implementation_Guide_FR.md"
 )
@@ -21,6 +26,9 @@ done
 
 rg -n "Event\.Conflict\.BanditRaid" Config/Tags/GameplayTags.ini >/dev/null
 rg -n "ReplicationGraphClassName" Config/DefaultEngine.ini >/dev/null
+
+rg -n "ValidateAgainstCodeElisabeth" Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp >/dev/null
+rg -n "MaxAutonomousSeverity" Config/DefaultGame.ini >/dev/null
 rg -n "RunEconomyPass" Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp >/dev/null
 
 echo "Validation MVP: PASS"

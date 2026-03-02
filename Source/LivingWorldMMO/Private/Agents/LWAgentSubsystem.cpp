@@ -1,6 +1,9 @@
 #include "Agents/LWAgentSubsystem.h"
 
 #include "Agents/LWAgentBrainComponent.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/PlayerController.h"
+=======
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -13,6 +16,26 @@ void ULWAgentSubsystem::Tick(float DeltaTime)
     }
     RebalanceAccumulator = 0.0f;
 
+    UWorld* World = GetWorld();
+    if (!World)
+    {
+        return;
+    }
+
+    TArray<APawn*> PlayerPawns;
+    for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+    {
+        APlayerController* PC = It->Get();
+        if (!PC)
+        {
+            continue;
+        }
+
+        if (APawn* PlayerPawn = PC->GetPawn())
+        {
+            PlayerPawns.Add(PlayerPawn);
+        }
+    }
     TArray<AActor*> PlayerPawns;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), APawn::StaticClass(), PlayerPawns);
 
@@ -23,6 +46,28 @@ void ULWAgentSubsystem::Tick(float DeltaTime)
             continue;
         }
 
+        if (PlayerPawns.IsEmpty())
+        {
+            Brain->SetLOD(ELWAgentLOD::Macro);
+            continue;
+        }
+
+        float ClosestSq = TNumericLimits<float>::Max();
+        const FVector AgentPos = Brain->GetOwner()->GetActorLocation();
+        for (APawn* PlayerPawn : PlayerPawns)
+        {
+            if (!PlayerPawn || PlayerPawn == Brain->GetOwner())
+            {
+                continue;
+            }
+
+            ClosestSq = FMath::Min(ClosestSq, FVector::DistSquared(AgentPos, PlayerPawn->GetActorLocation()));
+        }
+
+        if (ClosestSq == TNumericLimits<float>::Max())
+        {
+            Brain->SetLOD(ELWAgentLOD::Macro);
+            continue;
         float ClosestSq = TNumericLimits<float>::Max();
         const FVector AgentPos = Brain->GetOwner()->GetActorLocation();
         for (AActor* Pawn : PlayerPawns)

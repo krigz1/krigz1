@@ -3,6 +3,7 @@
 #include "Agents/LWAgentSubsystem.h"
 #include "Events/LWEventBusSubsystem.h"
 #include "GameFramework/Actor.h"
+#include "GameplayTagsManager.h"
 #include "WorldState/LWWorldStateSubsystem.h"
 
 ULWAgentBrainComponent::ULWAgentBrainComponent()
@@ -23,6 +24,19 @@ void ULWAgentBrainComponent::BeginPlay()
 
 void ULWAgentBrainComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+    UWorld* World = GetWorld();
+    if (World)
+    {
+        if (ULWAgentSubsystem* AgentSubsystem = World->GetSubsystem<ULWAgentSubsystem>())
+        {
+            AgentSubsystem->UnregisterBrain(this);
+        }
+
+        if (ULWWorldStateSubsystem* WS = World->GetSubsystem<ULWWorldStateSubsystem>())
+        {
+            WS->RemoveAgent(AgentId);
+        }
+
     if (ULWAgentSubsystem* AgentSubsystem = GetWorld()->GetSubsystem<ULWAgentSubsystem>())
     {
         AgentSubsystem->UnregisterBrain(this);
@@ -54,6 +68,14 @@ void ULWAgentBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType,
     {
         FLWWorldEvent Event;
         Event.EventId = FGuid::NewGuid();
+        const FGameplayTag InsultTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Event.Social.Insult"), false);
+        if (!InsultTag.IsValid())
+        {
+            UE_LOG(LogTemp, Warning, TEXT("LWAgentBrain: missing gameplay tag Event.Social.Insult, skipping social event."));
+            return;
+        }
+
+        Event.EventType = InsultTag;
         Event.EventType = FGameplayTag::RequestGameplayTag(TEXT("Event.Social.Insult"));
         Event.Location = State.Position;
         Event.Severity = 0.15f;
