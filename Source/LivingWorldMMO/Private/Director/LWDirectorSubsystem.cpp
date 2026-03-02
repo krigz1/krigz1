@@ -1,7 +1,7 @@
 #include "Director/LWDirectorSubsystem.h"
 
 #include "Events/LWEventBusSubsystem.h"
-#include "Misc/ConfigCacheIni.h"
+#include "GameplayTagsManager.h"
 #include "WorldState/LWWorldStateSubsystem.h"
 
 void ULWDirectorSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -12,22 +12,38 @@ void ULWDirectorSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     StartBudget.ZoneId = TEXT("MVP_Valley");
     Budgets.Add(StartBudget.ZoneId, StartBudget);
 
-    GConfig->GetBool(TEXT("/Script/LivingWorldMMO.LWDirectorSubsystem"), TEXT("bCodeElisabethEnabled"), bCodeElisabethEnabled, GGameIni);
-    GConfig->GetFloat(TEXT("/Script/LivingWorldMMO.LWDirectorSubsystem"), TEXT("MaxAutonomousSeverity"), MaxAutonomousSeverity, GGameIni);
+    if (bDeterministic)
+    {
+        RandomStream.Initialize(DeterministicSeed);
+    }
+    else
+    {
+        RandomStream.GenerateNewSeed();
+    }
+
+    const UGameplayTagsManager& TagsManager = UGameplayTagsManager::Get();
+    PriceUpdateTag = TagsManager.RequestGameplayTag(TEXT("Event.Economy.PriceUpdate"), false);
+    BanditRaidTag = TagsManager.RequestGameplayTag(TEXT("Event.Conflict.BanditRaid"), false);
 }
 
 void ULWDirectorSubsystem::Tick(float DeltaTime)
 {
+    UWorld* World = GetWorld();
+    if (!World || World->GetNetMode() == NM_Client)
+    {
+        return;
+    }
+
     EconomyAccumulator += DeltaTime;
     ConflictAccumulator += DeltaTime;
 
-    if (EconomyAccumulator > 5.0f)
+    if (EconomyAccumulator > EconomyIntervalSeconds)
     {
         EconomyAccumulator = 0.0f;
         RunEconomyPass();
     }
 
-    if (ConflictAccumulator > 15.0f)
+    if (ConflictAccumulator > ConflictIntervalSeconds)
     {
         ConflictAccumulator = 0.0f;
         RunConflictPass();
@@ -83,11 +99,17 @@ bool ULWDirectorSubsystem::RequiresCreatorValidation(const FLWWorldEvent& Candid
 
 void ULWDirectorSubsystem::RunEconomyPass()
 {
+    if (!PriceUpdateTag.IsValid())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("LWDirector: missing gameplay tag Event.Economy.PriceUpdate, skipping economy pass."));
+        return;
+    }
+
     FLWWorldEvent Event;
     Event.EventId = FGuid::NewGuid();
-    Event.EventType = FGameplayTag::RequestGameplayTag(TEXT("Event.Economy.PriceUpdate"));
+    Event.EventType = PriceUpdateTag;
     Event.Severity = 0.3f;
-    Event.Scalars.Add(TEXT("FoodPriceDelta"), FMath::FRandRange(-0.03f, 0.07f));
+    Event.Scalars.Add(TEXT("FoodPriceDelta"), RandomStream.FRandRange(-0.03f, 0.07f));
 
     FString RejectReason;
     if (!ValidateAgainstCodeElisabeth(Event, RejectReason))
@@ -107,10 +129,16 @@ void ULWDirectorSubsystem::RunEconomyPass()
 
 void ULWDirectorSubsystem::RunConflictPass()
 {
+    if (!BanditRaidTag.IsValid())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("LWDirector: missing gameplay tag Event.Conflict.BanditRaid, skipping conflict pass."));
+        return;
+    }
+
     FLWWorldEvent Event;
     Event.EventId = FGuid::NewGuid();
-    Event.EventType = FGameplayTag::RequestGameplayTag(TEXT("Event.Conflict.BanditRaid"));
-    Event.Location = FVector(4200.0f, -1800.0f, 0.0f);
+    Event.EventType = BanditRaidTag;
+    Event.Location = BanditRaidLocation;
     Event.Severity = 0.8f;
 
     FString RejectReason;
