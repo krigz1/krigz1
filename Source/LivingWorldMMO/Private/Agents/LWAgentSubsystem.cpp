@@ -3,6 +3,8 @@
 #include "Agents/LWAgentBrainComponent.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 void ULWAgentSubsystem::Tick(float DeltaTime)
 {
@@ -33,6 +35,8 @@ void ULWAgentSubsystem::Tick(float DeltaTime)
             PlayerPawns.Add(PlayerPawn);
         }
     }
+    TArray<AActor*> PlayerPawns;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), APawn::StaticClass(), PlayerPawns);
 
     for (ULWAgentBrainComponent* Brain : Brains)
     {
@@ -63,6 +67,11 @@ void ULWAgentSubsystem::Tick(float DeltaTime)
         {
             Brain->SetLOD(ELWAgentLOD::Macro);
             continue;
+        float ClosestSq = TNumericLimits<float>::Max();
+        const FVector AgentPos = Brain->GetOwner()->GetActorLocation();
+        for (AActor* Pawn : PlayerPawns)
+        {
+            ClosestSq = FMath::Min(ClosestSq, FVector::DistSquared(AgentPos, Pawn->GetActorLocation()));
         }
 
         if (ClosestSq < FMath::Square(2500.0f))
