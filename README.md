@@ -29,3 +29,12 @@ bash Scripts/validate_mvp.sh
 - `editor`
 - `game`
 - `server`
+
+
+## ELI Bridge (Python)
+
+```bash
+python3 Scripts/eli_bridge/eli.py
+```
+
+Doc: `Docs/ELI_Bridge_Integration_FR.md`.

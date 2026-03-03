@@ -26,6 +26,8 @@ done
 
 rg -n "Event\.Conflict\.BanditRaid" Config/Tags/GameplayTags.ini >/dev/null
 rg -n "ReplicationGraphClassName" Config/DefaultEngine.ini >/dev/null
+rg -n "ValidateAgainstCodeElisabeth" Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp >/dev/null
+rg -n "MaxAutonomousSeverity" Config/DefaultGame.ini >/dev/null
 
 rg -n "ValidateAgainstCodeElisabeth" Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp >/dev/null
 rg -n "MaxAutonomousSeverity" Config/DefaultGame.ini >/dev/null

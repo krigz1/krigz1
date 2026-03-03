@@ -92,4 +92,3 @@ Variantes:
 - Configurable via `Config/DefaultGame.ini`:
   - `bCodeElisabethEnabled=True`
   - `MaxAutonomousSeverity=0.85`
-  - 
