@@ -38,3 +38,11 @@ python3 Scripts/eli_bridge/eli.py
 ```
 
 Doc: `Docs/ELI_Bridge_Integration_FR.md`.
+
+## Living World + MLE (offline)
+
+Le pipeline déterministe offline est fourni dans `Scripts/eli_bridge/mle_living_world.py` et s'appuie sur les données JSON sous `Data/LivingMytho/` et `Data/LivingWorld/` (schéma versionné + journaux append-only).
+
+```bash
+python3 Scripts/eli_bridge/mle_living_world.py
+```
