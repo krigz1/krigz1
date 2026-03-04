@@ -16,6 +16,7 @@ void ULWReplicationGraph::InitGlobalGraphNodes()
 void ULWReplicationGraph::InitConnectionGraphNodes(UNetReplicationGraphConnection* ConnectionManager)
 {
     UReplicationGraphNode_AlwaysRelevant_ForConnection* Node = CreateNewNode<UReplicationGraphNode_AlwaysRelevant_ForConnection>();
+    ConnectionManager->OnClientVisibleLevelNameAdd(FName(TEXT("Persistent_Level")), this);
     AddConnectionGraphNode(Node, ConnectionManager);
 }
 
