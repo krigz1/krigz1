@@ -1,4 +1,5 @@
 name: "CI Failure"
+description: "CI/CD échoue, merge bloqué, permissions, checks requis"
 description: "CI/CD échoue, merge bloqué, workflow cassé, publication échoue"
 title: "[CI] <résumé court>"
 labels: ["ci", "bug"]
@@ -21,11 +22,41 @@ body:
       required: true
 
   - type: dropdown
+    id: scope
+    attributes:
+      label: Scope du changement
+      options:
+        - "code C++"
+        - "JSON/Data"
+        - "Scripts"
+        - "Workflows CI"
+        - "Assets/LFS"
+        - "Autre"
+    validations:
+      required: true
+
+  - type: textarea
+    id: changed_files
+    attributes:
+      label: Fichiers modifiés principaux (top 5-10)
+      render: text
+      placeholder: |
+        - ...
+        - ...
+    validations:
+      required: false
+
+  - type: dropdown
     id: symptom
     attributes:
       label: Symptôme
       options:
         - "CI fail"
+        - "merge bloqué (checks requis)"
+        - "push refusé"
+        - "publish/package échoue"
+        - "webhook KO"
+        - "Autre"
         - "merge bloqué"
         - "push refusé"
         - "publish package échoue"
@@ -41,6 +72,8 @@ body:
       options:
         - "faire passer la CI"
         - "débloquer le merge"
+        - "corriger permissions/token"
+        - "publier une release/package"
         - "publier une release"
         - "corriger un build"
         - "autre"
@@ -66,6 +99,8 @@ body:
   - type: input
     id: run_id
     attributes:
+      label: Run ID (GitHub Actions)
+      placeholder: "1234567890"
       label: Run ID (Actions)
       placeholder: "ex: 1234567890"
     validations:
@@ -75,6 +110,7 @@ body:
     id: workflow
     attributes:
       label: Workflow
+      placeholder: ".github/workflows/diagnostics.yml"
       placeholder: "diagnostics.yml / build.yml / etc."
     validations:
       required: true
@@ -83,6 +119,7 @@ body:
     id: job_step
     attributes:
       label: Job/Step en échec
+      placeholder: "job: validate / step: Validate repo (Linux)"
       placeholder: "job: build-win64 / step: Build"
     validations:
       required: true
@@ -135,6 +172,8 @@ body:
   - type: textarea
     id: log_excerpt
     attributes:
+      label: Extrait log (10–40 lignes)
+      description: "Colle la partie la plus utile."
       label: Extrait log (10–30 lignes)
       description: "Coller uniquement la partie la plus utile"
       render: text
@@ -144,6 +183,7 @@ body:
   - type: dropdown
     id: local_repro
     attributes:
+      label: Reproduction locale
       label: Repro locale
       options:
         - "OK"
@@ -155,6 +195,9 @@ body:
   - type: textarea
     id: local_command
     attributes:
+      label: Commande locale (si applicable)
+      render: text
+      placeholder: ".\\Scripts\\build_and_run.ps1 -Target editor"
       label: Commande locale
       placeholder: ".\\Scripts\\build_and_run.ps1 -Target editor"
       render: text
@@ -172,6 +215,7 @@ body:
   - type: dropdown
     id: caches
     attributes:
+      label: Cache CI utilisé
       label: Cache utilisé
       options:
         - "aucun"
@@ -194,6 +238,9 @@ body:
       required: true
 
   - type: dropdown
+    id: actions_perm
+    attributes:
+      label: Workflow permissions (Settings > Actions > General)
     id: lfs_enabled
     attributes:
       label: Git LFS activé
@@ -229,6 +276,7 @@ body:
   - type: input
     id: token_type
     attributes:
+      label: Token utilisé (si publish/push)
       label: Token utilisé
       placeholder: "GITHUB_TOKEN | PAT fine-grained | PAT classic | GitHub App"
     validations:
@@ -242,6 +290,28 @@ body:
     validations:
       required: false
 
+  - type: dropdown
+    id: lfs_enabled
+    attributes:
+      label: Git LFS
+      options:
+        - "OK"
+        - "KO"
+        - "inconnu"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: bidi
+    attributes:
+      label: Caractères invisibles/bidi détectés (JSON/MD/TXT)
+      options:
+        - "aucun"
+        - "suspect"
+        - "confirmé"
+        - "inconnu"
+    validations:
+      required: true
   - type: input
     id: dependabot
     attributes:

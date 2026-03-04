@@ -14,6 +14,7 @@ body:
   - type: input
     id: pr_or_sha
     attributes:
+      label: Commit / PR (si applicable)
       label: Commit / PR
       placeholder: "SHA / #PR"
     validations:
@@ -24,6 +25,10 @@ body:
     attributes:
       label: Étapes de reproduction
       render: text
+      placeholder: |
+        1) ...
+        2) ...
+        3) ...
       placeholder: "1) ... 2) ... 3) ..."
     validations:
       required: true
