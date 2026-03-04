@@ -1,0 +1,21 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "5.3",
+  "Category": "MMO",
+  "Description": "Living World MMO TPS MVP",
+  "Modules": [
+    {
+      "Name": "LivingWorldMMO",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    { "Name": "GameplayAbilities", "Enabled": true },
+    { "Name": "GameplayTags", "Enabled": true },
+    { "Name": "GameplayTasks", "Enabled": true },
+    { "Name": "ReplicationGraph", "Enabled": true },
+    { "Name": "MassEntity", "Enabled": true },
+    { "Name": "WorldPartitionHLODUtilities", "Enabled": true }
+  ]
+}

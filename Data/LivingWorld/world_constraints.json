@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "size_order": ["tiny", "small", "medium", "large", "colossal"],
+  "biomes": {
+    "forêt": {
+      "size_min": "tiny",
+      "size_max": "large",
+      "allowed_locomotion_any": ["walk", "fly", "burrow"],
+      "weather_common_any": ["clair", "brume", "pluie"],
+      "spawn_budget": {"common": 40, "elite": 18, "rare": 6, "legendary": 1, "worldboss": 0},
+      "poi_rules": {"rare_pref_tags_any": ["ruins", "graveyard"], "legendary_allowed": true}
+    }
+  },
+  "spawn_distance_rules": {
+    "rare_min_distance_town_m": 350,
+    "legendary_min_distance_town_m": 900,
+    "worldboss_min_distance_town_m": 1500
+  },
+  "progression_rules": {
+    "zone_level_ranges": [{"min": 1, "max": 20, "rarity_caps": ["common", "elite", "rare"]}, {"min": 21, "max": 60, "rarity_caps": ["common", "elite", "rare", "legendary"]}],
+    "legendary_thresholds": {"min_players_recent": 3, "min_activity_score": 0.45}
+  },
+  "power_budget_rules": {
+    "max_cost_by_rarity": {"common": 25, "elite": 45, "rare": 70, "legendary": 100, "worldboss": 130},
+    "max_synergy_depth": 3,
+    "max_hard_cc_pvp": 1
+  },
+  "performance_rules": {
+    "max_entities_by_type": {"ambient": 200, "combat_ai": 120, "elite_ai": 40, "boss_ai": 8},
+    "tick_rate_policy": {
+      "ambient": {"tick_interval_s": 2.0, "allow_pause_offscreen": true},
+      "combat_ai": {"tick_interval_s": 0.3, "allow_pause_offscreen": false},
+      "boss_ai": {"tick_interval_s": 0.1, "allow_pause_offscreen": false}
+    },
+    "lod_policy": {"ai_lod_distances_m": [35, 90, 200], "animation_budget_class_default": "medium", "disable_navmesh_for_ambient": true}
+  }
+}

@@ -1,0 +1,56 @@
+name: "Bug Report"
+description: "Bug gameplay/système"
+title: "[BUG] <résumé court>"
+labels: ["bug"]
+body:
+  - type: input
+    id: branch
+    attributes:
+      label: Branche
+      placeholder: "main"
+    validations:
+      required: true
+
+  - type: input
+    id: pr_or_sha
+    attributes:
+      label: Commit / PR (si applicable)
+      placeholder: "SHA / #PR"
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes de reproduction
+      render: text
+      placeholder: |
+        1) ...
+        2) ...
+        3) ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Résultat attendu
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Résultat obtenu
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / captures (extrait)
+      render: text
+    validations:
+      required: false

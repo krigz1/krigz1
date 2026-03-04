@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "tags": {
+    "biomes": ["forêt", "ville", "plaine", "montagne", "désert"],
+    "locomotion": ["walk", "fly", "burrow", "swim"],
+    "rarity": ["common", "elite", "rare", "legendary", "worldboss"],
+    "damage_types": ["physical", "arcane", "poison", "fire", "ice"],
+    "status_effects": ["slow", "stun", "bleed", "fear"],
+    "mytho_themes": ["ancient_oath", "void_echo", "wild_hunt", "stone_memory"]
+  }
+}
