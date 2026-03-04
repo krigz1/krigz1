@@ -57,6 +57,11 @@ void ULWWorldStateSubsystem::RemoveAgent(const FGuid& AgentId)
 void ULWWorldStateSubsystem::WriteEventJournal(const FString& EventLine)
 {
     EventJournal.Add(EventLine);
+
+    if (EventJournal.Num() > 5000)
+    {
+        EventJournal.RemoveAt(0, 1000, EAllowShrinking::No);
+    }
 }
 
 FLWWorldSnapshot ULWWorldStateSubsystem::BuildSnapshot() const
@@ -83,6 +88,7 @@ void ULWWorldStateSubsystem::SaveSnapshot()
         return;
     }
 
+    ++ServerFrame;
     SaveGame->Snapshot = BuildSnapshot();
     SaveGame->EventJournal = EventJournal;
 

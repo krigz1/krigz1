@@ -15,6 +15,9 @@ required_files=(
   "Config/Tags/GameplayTags.ini"
   "Docs/MVP_Implementation_Guide_FR.md"
   "Docs/Code_Elisabeth_V480_FR.md"
+  "Data/LivingMytho/runtime_guards.json"
+  "Data/LivingWorld/director_state.json"
+  "Scripts/eli_bridge/mle_living_world.py"
   "Config/Tags/GameplayTags.ini"
   "Docs/MVP_Implementation_Guide_FR.md"
 )
@@ -29,6 +32,8 @@ rg -n "ReplicationGraphClassName" Config/DefaultEngine.ini >/dev/null
 rg -n "ValidateAgainstCodeElisabeth" Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp >/dev/null
 rg -n "MaxAutonomousSeverity" Config/DefaultGame.ini >/dev/null
 
+rg -n "def Director_HandleRequest" Scripts/eli_bridge/mle_living_world.py >/dev/null
+rg -n "schema_version" Data/LivingWorld/director_state.json >/dev/null
 rg -n "ValidateAgainstCodeElisabeth" Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp >/dev/null
 rg -n "MaxAutonomousSeverity" Config/DefaultGame.ini >/dev/null
 rg -n "RunEconomyPass" Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp >/dev/null

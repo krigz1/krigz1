@@ -16,6 +16,7 @@ void ULWAgentSubsystem::Tick(float DeltaTime)
     RebalanceAccumulator = 0.0f;
 
     UWorld* World = GetWorld();
+    if (!World || World->GetNetMode() == NM_Client)
     if (!World)
     {
         return;
@@ -51,6 +52,7 @@ void ULWAgentSubsystem::Tick(float DeltaTime)
             continue;
         }
 
+        float ClosestSq = MAX_flt;
         float ClosestSq = TNumericLimits<float>::Max();
         const FVector AgentPos = Brain->GetOwner()->GetActorLocation();
         for (APawn* PlayerPawn : PlayerPawns)
@@ -63,6 +65,10 @@ void ULWAgentSubsystem::Tick(float DeltaTime)
             ClosestSq = FMath::Min(ClosestSq, FVector::DistSquared(AgentPos, PlayerPawn->GetActorLocation()));
         }
 
+        if (ClosestSq == MAX_flt)
+        {
+            Brain->SetLOD(ELWAgentLOD::Macro);
+            continue;
         if (ClosestSq == TNumericLimits<float>::Max())
         {
             Brain->SetLOD(ELWAgentLOD::Macro);
