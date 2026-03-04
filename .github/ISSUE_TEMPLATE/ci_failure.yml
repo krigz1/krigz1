@@ -1,0 +1,267 @@
+name: "CI Failure"
+description: "CI/CD échoue, merge bloqué, workflow cassé, publication échoue"
+title: "[CI] <résumé court>"
+labels: ["ci", "bug"]
+body:
+  - type: input
+    id: repo
+    attributes:
+      label: Repo
+      description: "owner/repo"
+      placeholder: "krigz1/krigz1"
+    validations:
+      required: true
+
+  - type: input
+    id: branch
+    attributes:
+      label: Branche
+      placeholder: "main"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: Symptôme
+      options:
+        - "CI fail"
+        - "merge bloqué"
+        - "push refusé"
+        - "publish package échoue"
+        - "webhook KO"
+        - "autre"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: goal
+    attributes:
+      label: Objectif
+      options:
+        - "faire passer la CI"
+        - "débloquer le merge"
+        - "publier une release"
+        - "corriger un build"
+        - "autre"
+    validations:
+      required: true
+
+  - type: input
+    id: datetime_utc
+    attributes:
+      label: Date/heure (UTC)
+      placeholder: "2026-03-04T12:34:56Z"
+    validations:
+      required: false
+
+  - type: input
+    id: pr_or_sha
+    attributes:
+      label: Commit / PR
+      placeholder: "SHA / #PR"
+    validations:
+      required: true
+
+  - type: input
+    id: run_id
+    attributes:
+      label: Run ID (Actions)
+      placeholder: "ex: 1234567890"
+    validations:
+      required: true
+
+  - type: input
+    id: workflow
+    attributes:
+      label: Workflow
+      placeholder: "diagnostics.yml / build.yml / etc."
+    validations:
+      required: true
+
+  - type: input
+    id: job_step
+    attributes:
+      label: Job/Step en échec
+      placeholder: "job: build-win64 / step: Build"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: runner_os
+    attributes:
+      label: Runner OS
+      options:
+        - "ubuntu-latest"
+        - "windows-latest"
+        - "macos-latest"
+        - "self-hosted"
+    validations:
+      required: true
+
+  - type: input
+    id: runner_arch
+    attributes:
+      label: Architecture
+      placeholder: "x64 / arm64"
+    validations:
+      required: false
+
+  - type: input
+    id: unreal_version
+    attributes:
+      label: Unreal Engine version
+      placeholder: "5.3 / 5.4 / 5.5..."
+    validations:
+      required: false
+
+  - type: input
+    id: toolchain
+    attributes:
+      label: Toolchain
+      description: "VS/Clang/DotNet/Python versions"
+      placeholder: "VS 2022, DotNet 8.x, Python 3.11..."
+    validations:
+      required: false
+
+  - type: input
+    id: matrix_key
+    attributes:
+      label: Matrix key (si applicable)
+      placeholder: "windows-editor-development"
+    validations:
+      required: false
+
+  - type: textarea
+    id: log_excerpt
+    attributes:
+      label: Extrait log (10–30 lignes)
+      description: "Coller uniquement la partie la plus utile"
+      render: text
+    validations:
+      required: true
+
+  - type: dropdown
+    id: local_repro
+    attributes:
+      label: Repro locale
+      options:
+        - "OK"
+        - "KO"
+        - "non testé"
+    validations:
+      required: true
+
+  - type: textarea
+    id: local_command
+    attributes:
+      label: Commande locale
+      placeholder: ".\\Scripts\\build_and_run.ps1 -Target editor"
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: local_logs
+    attributes:
+      label: Logs locaux (extrait)
+      render: text
+    validations:
+      required: false
+
+  - type: dropdown
+    id: caches
+    attributes:
+      label: Cache utilisé
+      options:
+        - "aucun"
+        - "pip"
+        - "npm"
+        - "dotnet"
+        - "DerivedDataCache"
+        - "autre"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: cache_cleaned
+    attributes:
+      label: Nettoyage cache testé
+      options:
+        - "oui"
+        - "non"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: lfs_enabled
+    attributes:
+      label: Git LFS activé
+      options:
+        - "oui"
+        - "non"
+        - "inconnu"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: lfs_pulled
+    attributes:
+      label: Git LFS téléchargé (git lfs pull)
+      options:
+        - "oui"
+        - "non"
+        - "inconnu"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: actions_perm
+    attributes:
+      label: Workflow permissions (Actions > General)
+      options:
+        - "read-only"
+        - "read-write"
+        - "inconnu"
+    validations:
+      required: true
+
+  - type: input
+    id: token_type
+    attributes:
+      label: Token utilisé
+      placeholder: "GITHUB_TOKEN | PAT fine-grained | PAT classic | GitHub App"
+    validations:
+      required: false
+
+  - type: textarea
+    id: auth_errors
+    attributes:
+      label: Erreurs 401/403 (message exact)
+      render: text
+    validations:
+      required: false
+
+  - type: input
+    id: dependabot
+    attributes:
+      label: Dependabot alerts (N)
+      placeholder: "0"
+    validations:
+      required: false
+
+  - type: input
+    id: code_scanning
+    attributes:
+      label: Code scanning alerts (N)
+      placeholder: "0"
+    validations:
+      required: false
+
+  - type: input
+    id: secret_scanning
+    attributes:
+      label: Secret scanning alerts (N)
+      placeholder: "0"
+    validations:
+      required: false
