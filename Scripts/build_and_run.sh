@@ -17,6 +17,12 @@ UE_ROOT="${UE_ROOT:-${UE5_ROOT:-}}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --target)   TARGET_KIND="${2:-}"; shift 2 ;;
+    --config)   CONFIG="${2:-}"; shift 2 ;;
+    --run-args) RUN_ARGS="${2:-}"; shift 2 ;;
+    --ue-root)  UE_ROOT="${2:-}"; shift 2 ;;
+    -h|--help)
+      sed -n '1,60p' "$0"
     --target)
       TARGET_KIND="${2:-}"
       shift 2
@@ -64,6 +70,10 @@ if [[ ! -x "$EDITOR_BIN" ]]; then
   exit 1
 fi
 
+case "$TARGET_KIND" in
+  editor) TARGET_NAME="LivingWorldMMOEditor"; EXTRA_ARGS="" ;;
+  game)   TARGET_NAME="LivingWorldMMO";       EXTRA_ARGS="-game" ;;
+  server) TARGET_NAME="LivingWorldMMO";       EXTRA_ARGS="-server -log" ;;
 TARGET_NAME=""
 RUN_CMD=()
 
@@ -92,6 +102,9 @@ echo "[1/3] Generating project files..."
 echo "[2/3] Building $TARGET_NAME ($CONFIG)..."
 "$BUILD_SH" "$TARGET_NAME" Linux "$CONFIG" "$UPROJECT" -NoHotReloadFromIDE -Progress
 
+echo "[3/3] Running..."
+# shellcheck disable=SC2068
+"$EDITOR_BIN" "$UPROJECT" $EXTRA_ARGS $RUN_ARGS
 echo "[3/3] Running: ${RUN_CMD[*]}"
 # shellcheck disable=SC2068
 ${RUN_CMD[@]}
