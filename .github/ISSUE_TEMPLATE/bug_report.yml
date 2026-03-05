@@ -16,6 +16,7 @@ body:
     attributes:
       label: Commit / PR (si applicable)
       label: Commit / PR
+ main
       placeholder: "SHA / #PR"
     validations:
       required: false
