@@ -6,3 +6,6 @@ contact_links:
   - name: Sécurité (vulnérabilités / secrets)
     url: https://github.com/krigz1/krigz1/security/advisories/new
     about: Signale les vulnérabilités ici (pas dans une issue publique).
+  - name: Questions / Discussion
+    url: https://github.com/krigz1/krigz1/discussions
+    about: Utiliser Discussions pour les questions non-bug.

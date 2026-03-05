@@ -4,6 +4,12 @@ on:
   pull_request:
   push:
     branches: [ main ]
+name: Diagnostics
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
 
 permissions:
   contents: read
@@ -37,6 +43,17 @@ jobs:
           git lfs install --local
           git lfs pull
           git lfs checkout
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
       - name: Validate repo (Linux)
         if: runner.os == 'Linux'
@@ -46,3 +63,28 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: Scripts/ci/validate_repo.ps1
+
+  validate-lfs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Verify git lfs
+        run: |
+          git lfs version
+          git lfs ls-files || true
+          git lfs fsck || true
+
+  validate-repo-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check key folders
+        run: |
+          test -d Source
+          test -d Scripts
+          test -d Data
+          test -d .github

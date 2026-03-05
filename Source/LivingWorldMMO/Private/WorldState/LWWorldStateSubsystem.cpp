@@ -15,6 +15,9 @@ void ULWWorldStateSubsystem::Initialize(FSubsystemCollectionBase& Collection)
         return;
     }
 
+void ULWWorldStateSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+    Super::Initialize(Collection);
     LoadSnapshot();
 }
 
@@ -26,6 +29,7 @@ void ULWWorldStateSubsystem::Deinitialize()
         SaveSnapshot();
     }
 
+    SaveSnapshot();
     Super::Deinitialize();
 }
 
@@ -93,6 +97,10 @@ void ULWWorldStateSubsystem::SaveSnapshot()
     {
         UE_LOG(LogLWWorldState, Error, TEXT("SaveGameToSlot failed for slot '%s'"), *SaveSlotName);
     }
+    ULWWorldSaveGame* SaveGame = Cast<ULWWorldSaveGame>(UGameplayStatics::CreateSaveGameObject(ULWWorldSaveGame::StaticClass()));
+    SaveGame->Snapshot = BuildSnapshot();
+    SaveGame->EventJournal = EventJournal;
+    UGameplayStatics::SaveGameToSlot(SaveGame, SaveSlotName, 0);
 }
 
 bool ULWWorldStateSubsystem::LoadSnapshot()
