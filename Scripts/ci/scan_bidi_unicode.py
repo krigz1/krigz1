@@ -3,6 +3,10 @@ import argparse
 import os
 import sys
 
+BIDI = set(range(0x202A, 0x202F)) | set(range(0x2066, 0x206A))
+ZERO_WIDTH = {0x200B, 0x200C, 0x200D, 0x200E, 0x200F, 0xFEFF}
+
+def scan_file(path: str):
 BIDI = set(list(range(0x202A, 0x202F)) + list(range(0x2066, 0x206A)))
 ZERO_WIDTH = {0x200B, 0x200C, 0x200D, 0x200E, 0x200F, 0xFEFF}
 
@@ -20,6 +24,15 @@ def scan_file(path: str) -> list[str]:
             line = text.count("\n", 0, idx) + 1
             col = idx - text.rfind("\n", 0, idx)
             kind = "BIDI" if cp in BIDI else "ZERO_WIDTH"
+            issues.append(f"{kind} U+{cp:04X} line {line} col {col}")
+
+    return issues
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("root")
+    parser.add_argument("--extensions", default=".json,.jsonl,.md,.txt,.yml,.yaml")
+    args = parser.parse_args()
             issues.append(f"{kind} U+{cp:04X} at line {line}, col {col}")
     return issues
 
@@ -47,6 +60,7 @@ def main():
                     print(f"  - {it}")
                 if len(issues) > 50:
                     print(f"  - ... ({len(issues)-50} more)")
+
     if any_fail:
         sys.exit(1)
 

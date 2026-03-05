@@ -198,6 +198,7 @@ body:
       label: Commande locale (si applicable)
       render: text
       placeholder: ".\\Scripts\\build_and_run.ps1 -Target editor"
+
       label: Commande locale
       placeholder: ".\\Scripts\\build_and_run.ps1 -Target editor"
       render: text

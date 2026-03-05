@@ -2,6 +2,10 @@ $ErrorActionPreference = "Stop"
 
 $RootDir = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 
+Write-Host "[validate_repo.ps1] scanning unicode..."
+python "$RootDir\Scripts\ci\scan_bidi_unicode.py" "$RootDir" --extensions ".json,.jsonl,.md,.txt,.yml,.yaml"
+
+Write-Host "[validate_repo.ps1] validating JSON/JSONL..."
 python "$RootDir\Scripts\ci\scan_bidi_unicode.py" "$RootDir" --extensions ".json,.jsonl,.md,.txt,.yml,.yaml"
 
 Write-Host "[validate_repo.ps1] JSON parse check..."

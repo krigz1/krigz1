@@ -3,6 +3,8 @@ name: diagnostics
 on:
   pull_request:
   push:
+    branches:
+      - main
     branches: [ main ]
 name: Diagnostics
 
@@ -20,6 +22,17 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Setup Git LFS (Linux)
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -36,6 +49,7 @@ jobs:
           git lfs pull
           git lfs checkout
 
+      - name: Setup Git LFS (Windows)
       - name: Ensure LFS files are checked out (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -43,6 +57,15 @@ jobs:
           git lfs install --local
           git lfs pull
           git lfs checkout
+
+      - name: Validate repository (Linux)
+        if: runner.os == 'Linux'
+        run: bash Scripts/ci/validate_repo.sh
+
+      - name: Validate repository (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Scripts/ci/validate_repo.ps1
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
