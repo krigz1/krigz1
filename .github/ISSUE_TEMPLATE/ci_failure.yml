@@ -1,0 +1,236 @@
+name: "CI Failure"
+description: "CI/CD échoue, merge bloqué, permissions, checks requis"
+title: "[CI] <résumé court>"
+labels: ["ci", "bug"]
+body:
+  - type: input
+    id: repo
+    attributes:
+      label: Repo
+      description: "owner/repo"
+      placeholder: "krigz1/krigz1"
+    validations:
+      required: true
+
+  - type: input
+    id: branch
+    attributes:
+      label: Branche
+      placeholder: "main"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Scope du changement
+      options:
+        - "code C++"
+        - "JSON/Data"
+        - "Scripts"
+        - "Workflows CI"
+        - "Assets/LFS"
+        - "Autre"
+    validations:
+      required: true
+
+  - type: textarea
+    id: changed_files
+    attributes:
+      label: Fichiers modifiés principaux (top 5-10)
+      render: text
+      placeholder: |
+        - ...
+        - ...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: Symptôme
+      options:
+        - "CI fail"
+        - "merge bloqué (checks requis)"
+        - "push refusé"
+        - "publish/package échoue"
+        - "webhook KO"
+        - "Autre"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: goal
+    attributes:
+      label: Objectif
+      options:
+        - "faire passer la CI"
+        - "débloquer le merge"
+        - "corriger permissions/token"
+        - "publier une release/package"
+        - "autre"
+    validations:
+      required: true
+
+  - type: input
+    id: datetime_utc
+    attributes:
+      label: Date/heure (UTC)
+      placeholder: "2026-03-04T12:34:56Z"
+    validations:
+      required: false
+
+  - type: input
+    id: pr_or_sha
+    attributes:
+      label: Commit / PR
+      placeholder: "SHA / #PR"
+    validations:
+      required: true
+
+  - type: input
+    id: run_id
+    attributes:
+      label: Run ID (GitHub Actions)
+      placeholder: "1234567890"
+    validations:
+      required: true
+
+  - type: input
+    id: workflow
+    attributes:
+      label: Workflow
+      placeholder: ".github/workflows/diagnostics.yml"
+    validations:
+      required: true
+
+  - type: input
+    id: job_step
+    attributes:
+      label: Job/Step en échec
+      placeholder: "job: validate / step: Validate repo (Linux)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: runner_os
+    attributes:
+      label: Runner OS
+      options:
+        - "ubuntu-latest"
+        - "windows-latest"
+        - "macos-latest"
+        - "self-hosted"
+    validations:
+      required: true
+
+  - type: input
+    id: matrix_key
+    attributes:
+      label: Matrix key (si applicable)
+      placeholder: "windows-editor-development"
+    validations:
+      required: false
+
+  - type: textarea
+    id: log_excerpt
+    attributes:
+      label: Extrait log (10–40 lignes)
+      description: "Colle la partie la plus utile."
+      render: text
+    validations:
+      required: true
+
+  - type: dropdown
+    id: local_repro
+    attributes:
+      label: Reproduction locale
+      options:
+        - "OK"
+        - "KO"
+        - "non testé"
+    validations:
+      required: true
+
+  - type: textarea
+    id: local_command
+    attributes:
+      label: Commande locale (si applicable)
+      render: text
+      placeholder: ".\\Scripts\\build_and_run.ps1 -Target editor"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: caches
+    attributes:
+      label: Cache CI utilisé
+      options:
+        - "aucun"
+        - "pip"
+        - "npm"
+        - "dotnet"
+        - "DerivedDataCache"
+        - "autre"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: cache_cleaned
+    attributes:
+      label: Nettoyage cache testé
+      options:
+        - "oui"
+        - "non"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: actions_perm
+    attributes:
+      label: Workflow permissions (Settings > Actions > General)
+      options:
+        - "read-only"
+        - "read-write"
+        - "inconnu"
+    validations:
+      required: true
+
+  - type: input
+    id: token_type
+    attributes:
+      label: Token utilisé (si publish/push)
+      placeholder: "GITHUB_TOKEN | PAT fine-grained | PAT classic | GitHub App"
+    validations:
+      required: false
+
+  - type: textarea
+    id: auth_errors
+    attributes:
+      label: Erreurs 401/403 (message exact)
+      render: text
+    validations:
+      required: false
+
+  - type: dropdown
+    id: lfs_enabled
+    attributes:
+      label: Git LFS
+      options:
+        - "OK"
+        - "KO"
+        - "inconnu"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: bidi
+    attributes:
+      label: Caractères invisibles/bidi détectés (JSON/MD/TXT)
+      options:
+        - "aucun"
+        - "suspect"
+        - "confirmé"
+        - "inconnu"
+    validations:
+      required: true

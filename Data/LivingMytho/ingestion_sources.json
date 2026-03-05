@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "offline_only": true,
+  "sources": [
+    {"id": "src_placeholder_01", "type": "text_corpus", "license": "internal_only", "last_ingested_ts": "2025-12-31T00:00:00Z"}
+  ]
+}

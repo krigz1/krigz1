@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "forms": [
+    {
+      "id": "wolf_stalker",
+      "label": "Traqueur-loup",
+      "size_class": "medium",
+      "tags": ["beast", "pack"],
+      "locomotion": ["walk"],
+      "biome_affinity": {"forêt": 0.9, "plaine": 0.5},
+      "constraints": {
+        "zone_level_min": 1,
+        "zone_level_max": 30,
+        "requires_weather_any": [],
+        "forbidden_weather_any": ["tempête_sable"],
+        "allowed_time_any": ["jour", "nuit"],
+        "skeleton_profile": "humanoid_light",
+        "collision_radius_m": 0.8
+      }
+    }
+  ],
+  "powers": [
+    {
+      "id": "pounce_bleed",
+      "label": "Bond lacérant",
+      "tags": ["physical", "bleed"],
+      "synergies": ["fear_howl"],
+      "counters": ["shield_wall"],
+      "balance": {"power_budget_cost": 12, "pvp_scaling": 0.9, "cooldown_s": 10, "telegraph_ms": 700}
+    }
+  ],
+  "motifs": [
+    {
+      "id": "ashen_runes",
+      "label": "Runes cendrées",
+      "tags": ["ancient", "ritual"],
+      "visual_hooks": {"grayscale_decal_id": "decal_ash_01", "audio_family": "whisper", "vfx_family": "embers"}
+    }
+  ],
+  "themes": [
+    {
+      "id": "oath_of_thorns",
+      "label": "Serment des épines",
+      "tags": ["oath", "wild"],
+      "narrative_hooks": {
+        "rumor_templates": ["Un ancien pacte se réveille près de {poi_name}."],
+        "taboo_hints": ["Nul ne doit briser le cercle gravé."]
+      }
+    }
+  ],
+  "weaknesses": [
+    {
+      "id": "weak_fire_sigil",
+      "label": "Sigils de feu",
+      "tags": ["fire", "ritual_break"],
+      "effect": {"type": "damage_amp", "value": 0.2, "condition": {"status_required": "burning"}}
+    }
+  ]
+}
