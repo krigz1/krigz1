@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "mythologies": [
+    {
+      "id": "thorn_covenant",
+      "name": "Concordat des Ronces",
+      "core_themes": ["ancient_oath", "wild_hunt"],
+      "preferred_atoms": {
+        "forms_tags_any": ["beast"],
+        "powers_tags_any": ["physical", "bleed"],
+        "motifs_tags_any": ["ancient"],
+        "themes_tags_any": ["oath"]
+      },
+      "taboos": [{"id": "taboo_circle_break", "label": "Briser les cercles", "tags": ["ritual_break"], "player_visible_hint_level": 2}],
+      "rituals": [{"id": "ritual_silent_hunt", "label": "La Chasse Muette", "tags": ["hunt"], "player_visible_hint_level": 1}],
+      "signature_spawn": {
+        "weather_pref_any": ["brume", "pluie"],
+        "time_pref_any": ["nuit"],
+        "biomes_pref": {"forêt": 1.0, "plaine": 0.3},
+        "poi_tags_any": ["ruins", "graveyard", "shrine"]
+      },
+      "pressure_model": {
+        "base": 0.4,
+        "event_weights": {"kill": 0.25, "crime": 0.20, "quest_success": -0.08},
+        "decay_per_hour": 0.03,
+        "diffusion_to_neighbors": 0.07
+      },
+      "lore_seeds": [{"id": "seed_howl_01", "tags": ["hunt"], "short": "Des cornes gravées pleurent à la lune."}]
+    }
+  ]
+}

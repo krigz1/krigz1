@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "atlases": [
+    {"atlas_id": "atlas_gray_01", "entries": ["entry_ruins", "entry_beast", "entry_banner"]}
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-03-04T18:31:41Z",
+  "zones": {
+    "default_zone": {
+      "biome": "forêt",
+      "budget": {
+        "common": 40,
+        "elite": 18,
+        "rare": 6,
+        "legendary": 1,
+        "worldboss": 0
+      },
+      "current": {
+        "common": 0,
+        "elite": 0,
+        "rare": 0,
+        "legendary": 0,
+        "worldboss": 0
+      },
+      "cooldowns": {
+        "rare_until_ts": "",
+        "legendary_until_ts": "",
+        "worldboss_until_ts": ""
+      },
+      "max_legends_per_poi": 1,
+      "poi_overrides": {}
+    }
+  }
+}

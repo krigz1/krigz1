@@ -1,0 +1,4 @@
+ArchetypeId,Faction,MoveSpeed,Aggression,Tags
+Merchant_T1,MerchantGuild,300,0.05,"Economy.Item.Food"
+Bandit_T1,Bandits,420,0.75,"Event.Conflict.BanditRaid"
+Wildlife_Deer,Wildlife,500,0.10,""
