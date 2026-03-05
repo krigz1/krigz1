@@ -15,6 +15,8 @@ body:
     id: pr_or_sha
     attributes:
       label: Commit / PR (si applicable)
+      label: Commit / PR
+ main
       placeholder: "SHA / #PR"
     validations:
       required: false
@@ -28,6 +30,7 @@ body:
         1) ...
         2) ...
         3) ...
+      placeholder: "1) ... 2) ... 3) ..."
     validations:
       required: true
 

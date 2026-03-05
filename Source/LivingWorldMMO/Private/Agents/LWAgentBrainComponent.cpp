@@ -36,6 +36,10 @@ void ULWAgentBrainComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
         {
             WS->RemoveAgent(AgentId);
         }
+
+    if (ULWAgentSubsystem* AgentSubsystem = GetWorld()->GetSubsystem<ULWAgentSubsystem>())
+    {
+        AgentSubsystem->UnregisterBrain(this);
     }
 
     Super::EndPlay(EndPlayReason);
@@ -72,6 +76,7 @@ void ULWAgentBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType,
         }
 
         Event.EventType = InsultTag;
+        Event.EventType = FGameplayTag::RequestGameplayTag(TEXT("Event.Social.Insult"));
         Event.Location = State.Position;
         Event.Severity = 0.15f;
         if (ULWEventBusSubsystem* EventBus = GetWorld()->GetSubsystem<ULWEventBusSubsystem>())

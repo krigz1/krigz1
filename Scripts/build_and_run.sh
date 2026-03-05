@@ -23,6 +23,24 @@ while [[ $# -gt 0 ]]; do
     --ue-root)  UE_ROOT="${2:-}"; shift 2 ;;
     -h|--help)
       sed -n '1,60p' "$0"
+    --target)
+      TARGET_KIND="${2:-}"
+      shift 2
+      ;;
+    --config)
+      CONFIG="${2:-}"
+      shift 2
+      ;;
+    --run-args)
+      RUN_ARGS="${2:-}"
+      shift 2
+      ;;
+    --ue-root)
+      UE_ROOT="${2:-}"
+      shift 2
+      ;;
+    -h|--help)
+      sed -n '1,24p' "$0"
       exit 0
       ;;
     *)
@@ -56,6 +74,22 @@ case "$TARGET_KIND" in
   editor) TARGET_NAME="LivingWorldMMOEditor"; EXTRA_ARGS="" ;;
   game)   TARGET_NAME="LivingWorldMMO";       EXTRA_ARGS="-game" ;;
   server) TARGET_NAME="LivingWorldMMO";       EXTRA_ARGS="-server -log" ;;
+TARGET_NAME=""
+RUN_CMD=()
+
+case "$TARGET_KIND" in
+  editor)
+    TARGET_NAME="LivingWorldMMOEditor"
+    RUN_CMD=("$EDITOR_BIN" "$UPROJECT" $RUN_ARGS)
+    ;;
+  game)
+    TARGET_NAME="LivingWorldMMO"
+    RUN_CMD=("$EDITOR_BIN" "$UPROJECT" -game $RUN_ARGS)
+    ;;
+  server)
+    TARGET_NAME="LivingWorldMMO"
+    RUN_CMD=("$EDITOR_BIN" "$UPROJECT" -server -log $RUN_ARGS)
+    ;;
   *)
     echo "ERROR: unsupported --target '$TARGET_KIND' (editor|game|server)"
     exit 1
@@ -71,3 +105,6 @@ echo "[2/3] Building $TARGET_NAME ($CONFIG)..."
 echo "[3/3] Running..."
 # shellcheck disable=SC2068
 "$EDITOR_BIN" "$UPROJECT" $EXTRA_ARGS $RUN_ARGS
+echo "[3/3] Running: ${RUN_CMD[*]}"
+# shellcheck disable=SC2068
+${RUN_CMD[@]}
