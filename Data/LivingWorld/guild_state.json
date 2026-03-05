@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "guilds": {
+    "wardens": {
+      "roles_permissions": {"leader": ["tax_set", "contest_start"], "officer": ["contract_create"]},
+      "contracts": [],
+      "world_signals": {"guilds_recent_count": 1, "conflict_push": 0.1}
+    }
+  }
+}

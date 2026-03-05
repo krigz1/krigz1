@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "banned_terms": ["zeus", "thor", "anubis", "odin", "ra", "athena"],
+  "fingerprints": ["\\b[a-z]{2,}us\\b", "\\bmytholog(y|ie)\\s+irl\\b"],
+  "safe_templates": {
+    "entity_name_templates": ["Sentinelle des {theme}", "Écho de {zone}", "Gardien du {poi}"],
+    "rumor_templates": ["Une présence étrange rôde près de {poi}.", "Les chasseurs évitent la route de {zone} cette nuit."],
+    "taboo_templates": ["On dit qu'il ne faut jamais rompre les sceaux de {poi}."],
+    "rewrite_rules": [
+      {"match": "[A-Z][a-z]+", "replace": "Nom oublié"}
+    ]
+  }
+}
