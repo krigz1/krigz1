@@ -1,0 +1,15 @@
+name: Validate MVP
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ripgrep
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+      - name: Run MVP validation
+        run: bash Scripts/validate_mvp.sh

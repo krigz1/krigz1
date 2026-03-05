@@ -1,5 +1,6 @@
 name: "CI Failure"
 description: "CI/CD échoue, merge bloqué, permissions, checks requis"
+description: "CI/CD échoue, merge bloqué, workflow cassé, publication échoue"
 title: "[CI] <résumé court>"
 labels: ["ci", "bug"]
 body:
@@ -56,6 +57,11 @@ body:
         - "publish/package échoue"
         - "webhook KO"
         - "Autre"
+        - "merge bloqué"
+        - "push refusé"
+        - "publish package échoue"
+        - "webhook KO"
+        - "autre"
     validations:
       required: true
 
@@ -68,6 +74,8 @@ body:
         - "débloquer le merge"
         - "corriger permissions/token"
         - "publier une release/package"
+        - "publier une release"
+        - "corriger un build"
         - "autre"
     validations:
       required: true
@@ -93,6 +101,8 @@ body:
     attributes:
       label: Run ID (GitHub Actions)
       placeholder: "1234567890"
+      label: Run ID (Actions)
+      placeholder: "ex: 1234567890"
     validations:
       required: true
 
@@ -101,6 +111,7 @@ body:
     attributes:
       label: Workflow
       placeholder: ".github/workflows/diagnostics.yml"
+      placeholder: "diagnostics.yml / build.yml / etc."
     validations:
       required: true
 
@@ -109,6 +120,7 @@ body:
     attributes:
       label: Job/Step en échec
       placeholder: "job: validate / step: Validate repo (Linux)"
+      placeholder: "job: build-win64 / step: Build"
     validations:
       required: true
 
@@ -125,6 +137,31 @@ body:
       required: true
 
   - type: input
+    id: runner_arch
+    attributes:
+      label: Architecture
+      placeholder: "x64 / arm64"
+    validations:
+      required: false
+
+  - type: input
+    id: unreal_version
+    attributes:
+      label: Unreal Engine version
+      placeholder: "5.3 / 5.4 / 5.5..."
+    validations:
+      required: false
+
+  - type: input
+    id: toolchain
+    attributes:
+      label: Toolchain
+      description: "VS/Clang/DotNet/Python versions"
+      placeholder: "VS 2022, DotNet 8.x, Python 3.11..."
+    validations:
+      required: false
+
+  - type: input
     id: matrix_key
     attributes:
       label: Matrix key (si applicable)
@@ -137,6 +174,8 @@ body:
     attributes:
       label: Extrait log (10–40 lignes)
       description: "Colle la partie la plus utile."
+      label: Extrait log (10–30 lignes)
+      description: "Coller uniquement la partie la plus utile"
       render: text
     validations:
       required: true
@@ -145,6 +184,7 @@ body:
     id: local_repro
     attributes:
       label: Reproduction locale
+      label: Repro locale
       options:
         - "OK"
         - "KO"
@@ -158,6 +198,18 @@ body:
       label: Commande locale (si applicable)
       render: text
       placeholder: ".\\Scripts\\build_and_run.ps1 -Target editor"
+
+      label: Commande locale
+      placeholder: ".\\Scripts\\build_and_run.ps1 -Target editor"
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: local_logs
+    attributes:
+      label: Logs locaux (extrait)
+      render: text
     validations:
       required: false
 
@@ -165,6 +217,7 @@ body:
     id: caches
     attributes:
       label: Cache CI utilisé
+      label: Cache utilisé
       options:
         - "aucun"
         - "pip"
@@ -189,6 +242,31 @@ body:
     id: actions_perm
     attributes:
       label: Workflow permissions (Settings > Actions > General)
+    id: lfs_enabled
+    attributes:
+      label: Git LFS activé
+      options:
+        - "oui"
+        - "non"
+        - "inconnu"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: lfs_pulled
+    attributes:
+      label: Git LFS téléchargé (git lfs pull)
+      options:
+        - "oui"
+        - "non"
+        - "inconnu"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: actions_perm
+    attributes:
+      label: Workflow permissions (Actions > General)
       options:
         - "read-only"
         - "read-write"
@@ -200,6 +278,7 @@ body:
     id: token_type
     attributes:
       label: Token utilisé (si publish/push)
+      label: Token utilisé
       placeholder: "GITHUB_TOKEN | PAT fine-grained | PAT classic | GitHub App"
     validations:
       required: false
@@ -234,3 +313,26 @@ body:
         - "inconnu"
     validations:
       required: true
+  - type: input
+    id: dependabot
+    attributes:
+      label: Dependabot alerts (N)
+      placeholder: "0"
+    validations:
+      required: false
+
+  - type: input
+    id: code_scanning
+    attributes:
+      label: Code scanning alerts (N)
+      placeholder: "0"
+    validations:
+      required: false
+
+  - type: input
+    id: secret_scanning
+    attributes:
+      label: Secret scanning alerts (N)
+      placeholder: "0"
+    validations:
+      required: false
