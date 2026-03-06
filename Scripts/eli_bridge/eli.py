@@ -96,6 +96,7 @@ def load_json_file(path: Path, default_factory, repair_fn=None):
         return default_factory()
     except OSError as e:
         logger.error(f"Erreur lecture {path}: {e}")
+    except Exception:
         return default_factory()
 
 
@@ -106,6 +107,7 @@ def save_json_file(path: Path, data: Any) -> bool:
         return True
     except Exception as e:
         logger.error(f"Échec écriture {path}: {e}")
+    except Exception:
         return False
 
 
@@ -228,6 +230,9 @@ def write_text(path: Path, text: str) -> bool:
     except OSError as e:
         logger.error(f"write_text failed {path}: {e}")
         return False
+def write_text(path: Path, text: str):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
 
 
 def pick_many(seq, k):
@@ -1002,6 +1007,7 @@ def memory_driven_quests(zone: str, player_id: str = "p1", max_q: int = 2, budge
         return []
 
     db = _BRIDGE.load_npc_db()
+    db = EliBridge().load_npc_db()
     npcs_map = (db.get("npcs", {}) or {})
     npc_ids = list(npcs_map.keys())
     if len(npc_ids) > budget:
@@ -1024,6 +1030,7 @@ def memory_driven_quests(zone: str, player_id: str = "p1", max_q: int = 2, budge
     out, thread = [], None
     if threads_data is not None:
         factions = (_BRIDGE.load_world_state().get("world_flags", {}) or {}).get("factions", [])
+        factions = (EliBridge().load_world_state().get("world_flags", {}) or {}).get("factions", []) or []
         npc_keys = [x[2] for x in (low_trust[:1] + high_respect[:1])]
         thread = pick_or_create_thread(threads_data, zone, factions, npc_keys, theme_hint="dette" if low_trust else "rumeur")
 
@@ -1568,6 +1575,7 @@ def action_next_scene():
         logger.error("Aucune scène générée.")
         return None
     best_score, reasons, best = result
+    best_score, reasons, best = choose_best_scene(u, proposals, state, rules_text)
     best = normalize_scene_output(best)
 
     thread = update_thread_from_scene(threads_data, best)

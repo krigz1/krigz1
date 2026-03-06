@@ -7,11 +7,17 @@ echo "[validate_repo.sh] scanning unicode..."
 python3 "$ROOT_DIR/Scripts/ci/scan_bidi_unicode.py" "$ROOT_DIR" --extensions ".json,.jsonl,.md,.txt,.yml,.yaml"
 
 echo "[validate_repo.sh] validating JSON/JSONL..."
+python3 "$ROOT_DIR/Scripts/ci/scan_bidi_unicode.py" "$ROOT_DIR" --extensions ".json,.jsonl,.md,.txt,.yml,.yaml"
+
+echo "[validate_repo.sh] JSON parse check..."
 python3 - <<'PY'
 import json, os, sys
 
 root = os.getcwd()
 fail = False
+
+def is_jsonl(path):
+    return path.endswith(".jsonl")
 
 def check_json(path):
     global fail
@@ -23,6 +29,7 @@ def check_json(path):
         fail = True
 
 def check_jsonl(path):
+def check_jsonl_file(path):
     global fail
     try:
         with open(path, "r", encoding="utf-8") as f:
@@ -32,6 +39,11 @@ def check_jsonl(path):
                     continue
                 try:
                     json.loads(s)
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    json.loads(line)
                 except Exception as e:
                     print(f"[JSONL ERROR] {path}:{i}: {e}")
                     fail = True
@@ -46,9 +58,39 @@ for dirpath, _, filenames in os.walk(root):
             check_json(p)
         elif fn.endswith(".jsonl"):
             check_jsonl(p)
+            check_jsonl_file(p)
 
 if fail:
     sys.exit(1)
 
 print("[validate_repo.sh] OK")
 PY
+cd "$ROOT_DIR"
+
+python3 Scripts/ci/scan_bidi_unicode.py "$ROOT_DIR"
+
+while IFS= read -r -d '' f; do
+  python3 - <<'PY' "$f"
+import json,sys
+p=sys.argv[1]
+with open(p,encoding='utf-8') as fh:
+    json.load(fh)
+PY
+  echo "JSON OK: $f"
+done < <(find . -type f -name '*.json' -not -path './.git/*' -print0)
+
+while IFS= read -r -d '' f; do
+  python3 - <<'PY' "$f"
+import json,sys
+p=sys.argv[1]
+with open(p,encoding='utf-8') as fh:
+    for i,l in enumerate(fh,1):
+        s=l.strip()
+        if not s:
+            continue
+        json.loads(s)
+PY
+  echo "JSONL OK: $f"
+done < <(find . -type f -name '*.jsonl' -not -path './.git/*' -print0)
+
+echo "validate_repo.sh: PASS"

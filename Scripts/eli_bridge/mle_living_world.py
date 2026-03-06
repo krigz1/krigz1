@@ -70,6 +70,10 @@ def _save_json(path: Path, data: dict) -> bool:
     except OSError as e:
         logging.getLogger("mle").error(f"_save_json failed {path}: {e}")
         return False
+def _save_json(path: Path, data: dict) -> None:
+    data["updated_ts"] = utc_now_iso()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 @dataclass
@@ -408,6 +412,11 @@ def Memory_RecordEvent(event: dict) -> dict:
         )
 
     return {"events_file": str(events.relative_to(_root())), "audit_file": str(audit.relative_to(_root()))}
+    events.write_text((events.read_text(encoding="utf-8") if events.exists() else "") + json.dumps(event, ensure_ascii=False) + "\n", encoding="utf-8")
+    audit.write_text((audit.read_text(encoding="utf-8") if audit.exists() else "") + json.dumps({"ts": utc_now_iso(), "kind": "record", "event_id": event.get("request_id")}, ensure_ascii=False) + "\n", encoding="utf-8")
+    return {"events_file": str(events.relative_to(_root())), "audit_file": str(audit.relative_to(_root()))}
+
+
 def Rumor_Publish(hook: dict) -> dict:
     feed = _load_json(_lw() / "rumor_feed.json")
     feed.setdefault("rumors", [])
@@ -581,6 +590,13 @@ def Director_TickSlow(now_ts: int) -> dict:
     )
     g["_last_refill"] = now_ts
 
+
+    # refill buckets and expire rumors
+    _ = TokenBucketConsume(ctx, {"rarity_hint": "common"}, now_ts)  # refill only side effect with amount=1 is not ideal
+    # compensate consumption for maintenance tick
+    anti = ctx.director_state.setdefault("director", {}).setdefault("global_anti_spam", {})
+    anti.setdefault("token_bucket", {}).setdefault("tokens", 0)
+    anti["token_bucket"]["tokens"] = min(float(anti["token_bucket"].get("capacity", 30)), float(anti["token_bucket"].get("tokens", 0)) + 1)
 
     feed = ctx.rumor_feed
     fresh = []

@@ -31,3 +31,36 @@ Ne jamais inclure secrets/tokens.
 Limiter les extraits à ~30–40 lignes.
 
 
+- Windows (typique): `C:\Users\<user>\AppData\Local\UnrealBuildTool\Log.txt`
+- Linux (selon setup): `~/.config/Epic/UnrealBuildTool/Log.txt`
+
+## Commandes build locales
+- Linux:
+  ```bash
+  bash Scripts/build_and_run.sh --target editor
+  ```
+- Windows PowerShell:
+  ```powershell
+  .\Scripts\build_and_run.ps1 -Target editor
+  ```
+
+## Git LFS
+```bash
+git lfs install
+git lfs pull
+git lfs ls-files
+```
+
+## Validation diagnostics locale
+- Linux/macOS:
+  ```bash
+  bash Scripts/ci/validate_repo.sh
+  ```
+- Windows PowerShell:
+  ```powershell
+  .\Scripts\ci\validate_repo.ps1
+  ```
+
+## Règles logs
+- Ne jamais inclure secrets/tokens.
+- Limiter les extraits à ~30–40 lignes.

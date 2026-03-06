@@ -18,9 +18,23 @@ required_files=(
   "Config/DefaultGame.ini"
   "Config/Tags/GameplayTags.ini"
   "Docs/MVP_Implementation_Guide_FR.md"
+
+  "Config/DefaultGame.ini"
+  "Config/Tags/GameplayTags.ini"
+  "Docs/MVP_Implementation_Guide_FR.md"
+  "Docs/Code_Elisabeth_V480_FR.md"
   "Data/LivingMytho/runtime_guards.json"
   "Data/LivingWorld/director_state.json"
   "Scripts/eli_bridge/mle_living_world.py"
+)
+
+for f in "${required_files[@]}"; do
+  if [[ ! -f "$f" ]]; then
+    echo "MISSING: $f"
+    exit 1
+  fi
+  "Config/Tags/GameplayTags.ini"
+  "Docs/MVP_Implementation_Guide_FR.md"
 )
 
 for f in "${required_files[@]}"; do
@@ -34,6 +48,11 @@ rg -n "ValidateAgainstCodeElisabeth" Source/LivingWorldMMO/Private/Director/LWDi
 rg -n "MaxAutonomousSeverity" Config/DefaultGame.ini >/dev/null
 rg -n "def Director_HandleRequest" Scripts/eli_bridge/mle_living_world.py >/dev/null
 rg -n "schema_version" Data/LivingWorld/director_state.json >/dev/null
+
+rg -n "def Director_HandleRequest" Scripts/eli_bridge/mle_living_world.py >/dev/null
+rg -n "schema_version" Data/LivingWorld/director_state.json >/dev/null
+rg -n "ValidateAgainstCodeElisabeth" Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp >/dev/null
+rg -n "MaxAutonomousSeverity" Config/DefaultGame.ini >/dev/null
 rg -n "RunEconomyPass" Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp >/dev/null
 
 echo "Validation MVP: PASS"
