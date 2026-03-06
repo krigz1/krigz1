@@ -1,0 +1,46 @@
+name: "Feature Request"
+description: "Proposition d'amélioration / nouvelle fonctionnalité"
+title: "[FEATURE] <résumé court>"
+labels: ["enhancement"]
+body:
+  - type: input
+    id: branch
+    attributes:
+      label: Branche
+      placeholder: "main"
+    validations:
+      required: false
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problème / besoin
+      render: text
+      placeholder: "Quel problème cette fonctionnalité résout-elle ?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposition
+      render: text
+      placeholder: "Décrire la solution proposée"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considérées
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact attendu (CI/build/gameplay/data)
+      render: text
+    validations:
+      required: false
