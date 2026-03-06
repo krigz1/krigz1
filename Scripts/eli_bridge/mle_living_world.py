@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import math
 import random
 import re
@@ -57,6 +58,18 @@ def _load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _save_json(path: Path, data: dict) -> bool:
+    try:
+        data["updated_ts"] = utc_now_iso()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps(data, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        return True
+    except OSError as e:
+        logging.getLogger("mle").error(f"_save_json failed {path}: {e}")
+        return False
 def _save_json(path: Path, data: dict) -> None:
     data["updated_ts"] = utc_now_iso()
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -382,6 +395,23 @@ def Memory_RecordEvent(event: dict) -> dict:
     base.mkdir(parents=True, exist_ok=True)
     events = base / f"{month}.events.jsonl"
     audit = base / f"{month}.audit.jsonl"
+    with open(events, "a", encoding="utf-8") as f:
+        f.write(json.dumps(event, ensure_ascii=False) + "\n")
+
+    with open(audit, "a", encoding="utf-8") as f:
+        f.write(
+            json.dumps(
+                {
+                    "ts": utc_now_iso(),
+                    "kind": "record",
+                    "event_id": event.get("request_id"),
+                },
+                ensure_ascii=False,
+            )
+            + "\n"
+        )
+
+    return {"events_file": str(events.relative_to(_root())), "audit_file": str(audit.relative_to(_root()))}
     events.write_text((events.read_text(encoding="utf-8") if events.exists() else "") + json.dumps(event, ensure_ascii=False) + "\n", encoding="utf-8")
     audit.write_text((audit.read_text(encoding="utf-8") if audit.exists() else "") + json.dumps({"ts": utc_now_iso(), "kind": "record", "event_id": event.get("request_id")}, ensure_ascii=False) + "\n", encoding="utf-8")
     return {"events_file": str(events.relative_to(_root())), "audit_file": str(audit.relative_to(_root()))}
@@ -537,6 +567,7 @@ def Director_HandleRequest(req_json: dict) -> dict:
 
 
 def Director_TickSlow(now_ts: int) -> dict:
+    now_ts = int(now_ts)
     ctx = LoadContext("default_zone")
     zones = ctx.director_state.setdefault("zone_metrics", {})
     for z, m in zones.items():
@@ -546,6 +577,19 @@ def Director_TickSlow(now_ts: int) -> dict:
         pressure = zstate.setdefault("myth_pressure", {})
         for myth_id, value in list(pressure.items()):
             pressure[myth_id] = max(0.0, float(value) - 0.01)
+    anti = ctx.director_state.setdefault("director", {}).setdefault("global_anti_spam", {})
+    g = anti.setdefault(
+        "token_bucket",
+        {"capacity": 30, "tokens": 30, "refill_per_min": 6},
+    )
+    last = int(g.get("_last_refill", now_ts))
+    mins = max(0.0, (now_ts - last) / 60.0)
+    g["tokens"] = min(
+        float(g.get("capacity", 30)),
+        float(g.get("tokens", 0)) + mins * float(g.get("refill_per_min", 6)),
+    )
+    g["_last_refill"] = now_ts
+
 
     # refill buckets and expire rumors
     _ = TokenBucketConsume(ctx, {"rarity_hint": "common"}, now_ts)  # refill only side effect with amount=1 is not ideal

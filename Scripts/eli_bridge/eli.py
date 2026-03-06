@@ -14,10 +14,29 @@ import json
 import os
 import random
 import re
+import logging
+from logging.handlers import RotatingFileHandler
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
+
+Path("logs").mkdir(parents=True, exist_ok=True)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    handlers=[
+        RotatingFileHandler(
+            "logs/eli_errors.log",
+            maxBytes=5_000_000,
+            backupCount=3,
+            encoding="utf-8",
+        ),
+        logging.StreamHandler(),
+    ],
+)
+logger = logging.getLogger("eli_bridge")
 
 
 # =========================
@@ -72,6 +91,11 @@ def load_json_file(path: Path, default_factory, repair_fn=None):
         if repair_fn:
             data = repair_fn(data)
         return data
+    except json.JSONDecodeError as e:
+        logger.warning(f"JSON corrompu {path}: {e}")
+        return default_factory()
+    except OSError as e:
+        logger.error(f"Erreur lecture {path}: {e}")
     except Exception:
         return default_factory()
 
@@ -81,6 +105,8 @@ def save_json_file(path: Path, data: Any) -> bool:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
         return True
+    except Exception as e:
+        logger.error(f"Échec écriture {path}: {e}")
     except Exception:
         return False
 
@@ -196,6 +222,14 @@ def read_text(path: Path) -> str:
         return ""
 
 
+def write_text(path: Path, text: str) -> bool:
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+        return True
+    except OSError as e:
+        logger.error(f"write_text failed {path}: {e}")
+        return False
 def write_text(path: Path, text: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
@@ -972,6 +1006,7 @@ def memory_driven_quests(zone: str, player_id: str = "p1", max_q: int = 2, budge
     if player_id.upper() == "SYSTEM" or max_q == 0:
         return []
 
+    db = _BRIDGE.load_npc_db()
     db = EliBridge().load_npc_db()
     npcs_map = (db.get("npcs", {}) or {})
     npc_ids = list(npcs_map.keys())
@@ -994,6 +1029,7 @@ def memory_driven_quests(zone: str, player_id: str = "p1", max_q: int = 2, budge
 
     out, thread = [], None
     if threads_data is not None:
+        factions = (_BRIDGE.load_world_state().get("world_flags", {}) or {}).get("factions", [])
         factions = (EliBridge().load_world_state().get("world_flags", {}) or {}).get("factions", []) or []
         npc_keys = [x[2] for x in (low_trust[:1] + high_respect[:1])]
         thread = pick_or_create_thread(threads_data, zone, factions, npc_keys, theme_hint="dette" if low_trust else "rumeur")
@@ -1534,6 +1570,11 @@ def action_next_scene():
     threads_data = load_threads()
 
     proposals = elisabeth_generate_scene(u, state, rel_data, rules_text, proposals_n=10)
+    result = choose_best_scene(u, proposals, state, rules_text)
+    if result is None:
+        logger.error("Aucune scène générée.")
+        return None
+    best_score, reasons, best = result
     best_score, reasons, best = choose_best_scene(u, proposals, state, rules_text)
     best = normalize_scene_output(best)
 

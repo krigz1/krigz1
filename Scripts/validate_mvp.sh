@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if ! command -v rg &>/dev/null; then
+  echo "⚠️  ripgrep non trouvé, fallback sur grep."
+  rg() { grep -rn "$@"; }
+fi
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
@@ -10,6 +15,9 @@ required_files=(
   "Source/LivingWorldMMO/Private/Director/LWDirectorSubsystem.cpp"
   "Source/LivingWorldMMO/Private/Net/LWReplicationGraph.cpp"
   "Config/DefaultEngine.ini"
+  "Config/DefaultGame.ini"
+  "Config/Tags/GameplayTags.ini"
+  "Docs/MVP_Implementation_Guide_FR.md"
 
   "Config/DefaultGame.ini"
   "Config/Tags/GameplayTags.ini"

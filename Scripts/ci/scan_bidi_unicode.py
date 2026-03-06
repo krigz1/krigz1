@@ -3,6 +3,8 @@ import argparse
 import os
 import sys
 
+IGNORED_DIRS = {".git", "__pycache__", "node_modules", ".venv", "venv"}
+
 BIDI = set(range(0x202A, 0x202F)) | set(range(0x2066, 0x206A))
 ZERO_WIDTH = {0x200B, 0x200C, 0x200D, 0x200E, 0x200F, 0xFEFF}
 
@@ -46,6 +48,8 @@ def main():
     root = os.path.abspath(args.root)
 
     any_fail = False
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in IGNORED_DIRS]
     for dirpath, _, filenames in os.walk(root):
         for fn in filenames:
             ext = os.path.splitext(fn)[1].lower()
