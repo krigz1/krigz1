@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+echo "[validate_repo.sh] scanning unicode..."
+python3 "$ROOT_DIR/Scripts/ci/scan_bidi_unicode.py" "$ROOT_DIR" --extensions ".json,.jsonl,.md,.txt,.yml,.yaml"
+
+echo "[validate_repo.sh] validating JSON/JSONL..."
+python3 - <<'PY'
+import json, os, sys
+
+root = os.getcwd()
+fail = False
+
+def check_json(path):
+    global fail
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            json.load(f)
+    except Exception as e:
+        print(f"[JSON ERROR] {path}: {e}")
+        fail = True
+
+def check_jsonl(path):
+    global fail
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            for i, line in enumerate(f, start=1):
+                s = line.strip()
+                if not s:
+                    continue
+                try:
+                    json.loads(s)
+                except Exception as e:
+                    print(f"[JSONL ERROR] {path}:{i}: {e}")
+                    fail = True
+    except Exception as e:
+        print(f"[JSONL READ ERROR] {path}: {e}")
+        fail = True
+
+for dirpath, _, filenames in os.walk(root):
+    for fn in filenames:
+        p = os.path.join(dirpath, fn)
+        if fn.endswith(".json"):
+            check_json(p)
+        elif fn.endswith(".jsonl"):
+            check_jsonl(p)
+
+if fail:
+    sys.exit(1)
+
+print("[validate_repo.sh] OK")
+PY

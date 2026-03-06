@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions / Discussions
+    url: https://github.com/krigz1/krigz1/discussions
+    about: Utilise Discussions pour les questions et idées.
+  - name: Sécurité (vulnérabilités / secrets)
+    url: https://github.com/krigz1/krigz1/security/advisories/new
+    about: Signale les vulnérabilités ici (pas dans une issue publique).
