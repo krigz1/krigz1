@@ -52,7 +52,7 @@ def main():
                 for it in issues[:50]:
                     print(f"  - {it}")
                 if len(issues) > 50:
-                    print(f"  - ... ({len(issues)-50} more)")
+                    print(f"  - ... ({len(issues) - 50} more)")
 
     if any_fail:
         sys.exit(1)

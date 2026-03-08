@@ -24,7 +24,10 @@ body:
     attributes:
       label: Unreal Engine version
       placeholder: "5.3 / 5.4 / 5.5 ..."
+<<<<<<< HEAD
+=======
       placeholder: "5.x"
+>>>>>>> origin/main
     validations:
       required: true
 
@@ -75,7 +78,10 @@ body:
     id: ubt_log_path
     attributes:
       label: Chemin UBT Log.txt (si dispo)
+<<<<<<< HEAD
+=======
       label: Chemin UBT Log.txt
+>>>>>>> origin/main
       render: text
       placeholder: "C:\\Users\\...\\UnrealBuildTool\\Log.txt"
     validations:
@@ -85,7 +91,10 @@ body:
     id: error_excerpt
     attributes:
       label: Erreurs (20–60 lignes)
+<<<<<<< HEAD
+=======
       label: Erreurs (extrait 20–40 lignes)
+>>>>>>> origin/main
       render: text
     validations:
       required: true
@@ -105,7 +114,10 @@ body:
     id: bidi
     attributes:
       label: Caractères invisibles/bidi
+<<<<<<< HEAD
+=======
       label: JSON / fichiers avec caractères invisibles (bidi)
+>>>>>>> origin/main
       options:
         - "aucun"
         - "suspect"

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if ! command -v rg &>/dev/null; then
-  echo "⚠️  ripgrep non trouvé, fallback sur grep."
+  echo "⚠️ ripgrep non trouvé, fallback sur grep."
   rg() { grep -rn "$@"; }
 fi
 

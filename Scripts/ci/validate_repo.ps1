@@ -5,9 +5,6 @@ $RootDir = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 Write-Host "[validate_repo.ps1] scanning unicode..."
 python "$RootDir\Scripts\ci\scan_bidi_unicode.py" "$RootDir" --extensions ".json,.jsonl,.md,.txt,.yml,.yaml"
 
-Write-Host "[validate_repo.ps1] validating JSON/JSONL..."
-python "$RootDir\Scripts\ci\scan_bidi_unicode.py" "$RootDir" --extensions ".json,.jsonl,.md,.txt,.yml,.yaml"
-
 Write-Host "[validate_repo.ps1] JSON parse check..."
 
 $fail = $false
@@ -33,7 +30,7 @@ function Test-JsonlFile([string]$path) {
       try {
         $null = $trim | ConvertFrom-Json
       } catch {
-        Write-Host "[JSONL ERROR] $path:$i : $($_.Exception.Message)"
+        Write-Host "[JSONL ERROR] ${path}:$i : $($_.Exception.Message)"
         $script:fail = $true
       }
     }
@@ -51,35 +48,3 @@ Get-ChildItem -Path $RootDir -Recurse -File | ForEach-Object {
 
 if ($fail) { exit 1 }
 Write-Host "[validate_repo.ps1] OK"
-$RepoRoot = (Resolve-Path "$PSScriptRoot/../..").Path
-Set-Location $RepoRoot
-
-python3 Scripts/ci/scan_bidi_unicode.py $RepoRoot
-
-Get-ChildItem -Path . -Recurse -File -Include *.json |
-  Where-Object { $_.FullName -notmatch '\\.git\\' } |
-  ForEach-Object {
-    $content = Get-Content -Raw -Encoding UTF8 $_.FullName
-    $null = $content | ConvertFrom-Json
-    Write-Host "JSON OK: $($_.FullName)"
-  }
-
-Get-ChildItem -Path . -Recurse -File -Include *.jsonl |
-  Where-Object { $_.FullName -notmatch '\\.git\\' } |
-  ForEach-Object {
-    $lineNo = 0
-    Get-Content -Encoding UTF8 $_.FullName | ForEach-Object {
-      $lineNo++
-      $line = $_.Trim()
-      if ($line.Length -eq 0) { return }
-      try {
-        $null = $line | ConvertFrom-Json
-      }
-      catch {
-        throw "Invalid JSONL at $($_.FullName):$lineNo"
-      }
-    }
-    Write-Host "JSONL OK: $($_.FullName)"
-  }
-
-Write-Host "validate_repo.ps1: PASS"

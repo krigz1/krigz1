@@ -3,6 +3,11 @@
   "world_id": "livingworldmmo_offline",
   "updated_ts": "2026-03-04T18:31:41Z",
   "world_seed": "0x1A2B3C4D5E6F7788",
+
+  "world_flags": {},
+  "active_events": [],
+  "npc_memory": [],
+
   "director": {
     "mode": "normal",
     "last_tick_ts": "2026-03-04T18:31:41Z",
@@ -20,6 +25,7 @@
       }
     }
   },
+
   "zone_metrics": {
     "default_zone": {
       "activity_score_ema": 0.196,
@@ -30,6 +36,7 @@
       "crime_score_ema": 0.098
     }
   },
+
   "selection_memory": {
     "recent_uniqueness_hashes": [],
     "recent_mythology_picks": []

@@ -31,6 +31,8 @@ Ne jamais inclure secrets/tokens.
 Limiter les extraits à ~30–40 lignes.
 
 
+<<<<<<< HEAD
+=======
 - Windows (typique): `C:\Users\<user>\AppData\Local\UnrealBuildTool\Log.txt`
 - Linux (selon setup): `~/.config/Epic/UnrealBuildTool/Log.txt`
 
@@ -64,3 +66,4 @@ git lfs ls-files
 ## Règles logs
 - Ne jamais inclure secrets/tokens.
 - Limiter les extraits à ~30–40 lignes.
+>>>>>>> origin/main

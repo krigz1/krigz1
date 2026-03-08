@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+<<<<<<< HEAD
+=======
     branches: [ main ]
 name: Diagnostics
 
@@ -12,6 +14,7 @@ on:
   push:
     branches: ["main"]
   pull_request:
+>>>>>>> origin/main
 
 permissions:
   contents: read
@@ -33,6 +36,8 @@ jobs:
           lfs: true
 
       - name: Setup Git LFS (Linux)
+<<<<<<< HEAD
+=======
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -43,6 +48,7 @@ jobs:
           fetch-depth: 0
 
       - name: Ensure LFS files are checked out (Linux)
+>>>>>>> origin/main
         if: runner.os == 'Linux'
         run: |
           git lfs install --local
@@ -50,7 +56,10 @@ jobs:
           git lfs checkout
 
       - name: Setup Git LFS (Windows)
+<<<<<<< HEAD
+=======
       - name: Ensure LFS files are checked out (Windows)
+>>>>>>> origin/main
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
@@ -66,6 +75,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: Scripts/ci/validate_repo.ps1
+<<<<<<< HEAD
+=======
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
@@ -111,3 +122,4 @@ jobs:
           test -d Scripts
           test -d Data
           test -d .github
+>>>>>>> origin/main

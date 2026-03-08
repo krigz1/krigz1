@@ -1023,7 +1023,11 @@ def memory_driven_quests(zone: str, player_id: str = "p1", max_q: int = 2, budge
 
     out, thread = [], None
     if threads_data is not None:
+<<<<<<< HEAD
+        factions = (_BRIDGE.load_world_state().get("world_flags", {}) or {}).get("factions", [])
+=======
         factions = (_BRIDGE.load_world_state().get("world_flags", {}) or {}).get("factions", []) or []
+>>>>>>> origin/main
         npc_keys = [x[2] for x in (low_trust[:1] + high_respect[:1])]
         thread = pick_or_create_thread(threads_data, zone, factions, npc_keys, theme_hint="dette" if low_trust else "rumeur")
 

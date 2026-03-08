@@ -408,8 +408,6 @@ def Memory_RecordEvent(event: dict) -> dict:
         )
 
     return {"events_file": str(events.relative_to(_root())), "audit_file": str(audit.relative_to(_root()))}
-
-
 def Rumor_Publish(hook: dict) -> dict:
     feed = _load_json(_lw() / "rumor_feed.json")
     feed.setdefault("rumors", [])
@@ -582,6 +580,7 @@ def Director_TickSlow(now_ts: int) -> dict:
         float(g.get("tokens", 0)) + mins * float(g.get("refill_per_min", 6)),
     )
     g["_last_refill"] = now_ts
+
 
     feed = ctx.rumor_feed
     fresh = []
