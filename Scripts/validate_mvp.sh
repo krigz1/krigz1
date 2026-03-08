@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if ! command -v rg &>/dev/null; then
-  echo "⚠️  ripgrep non trouvé, fallback sur grep."
+  echo "⚠️ ripgrep non trouvé, fallback sur grep."
   rg() { grep -rn "$@"; }
 fi
 
@@ -18,24 +18,17 @@ required_files=(
   "Config/DefaultGame.ini"
   "Config/Tags/GameplayTags.ini"
   "Docs/MVP_Implementation_Guide_FR.md"
-<<<<<<< HEAD
-=======
   "Docs/Code_Elisabeth_V480_FR.md"
->>>>>>> origin/main
   "Data/LivingMytho/runtime_guards.json"
   "Data/LivingWorld/director_state.json"
   "Scripts/eli_bridge/mle_living_world.py"
 )
 
 for f in "${required_files[@]}"; do
-<<<<<<< HEAD
-  [[ -f "$f" ]] || { echo "MISSING: $f"; exit 1; }
-=======
   if [[ ! -f "$f" ]]; then
     echo "MISSING: $f"
     exit 1
   fi
->>>>>>> origin/main
   echo "OK: $f"
 done
 
