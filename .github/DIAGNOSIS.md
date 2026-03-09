@@ -66,4 +66,3 @@ git lfs ls-files
 ## Règles logs
 - Ne jamais inclure secrets/tokens.
 - Limiter les extraits à ~30–40 lignes.
->>>>>>> origin/main
