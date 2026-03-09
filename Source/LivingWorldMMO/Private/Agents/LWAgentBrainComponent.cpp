@@ -24,8 +24,7 @@ void ULWAgentBrainComponent::BeginPlay()
 
 void ULWAgentBrainComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    UWorld* World = GetWorld();
-    if (World)
+    if (UWorld* World = GetWorld())
     {
         if (ULWAgentSubsystem* AgentSubsystem = World->GetSubsystem<ULWAgentSubsystem>())
         {
@@ -64,6 +63,7 @@ void ULWAgentBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType,
     {
         FLWWorldEvent Event;
         Event.EventId = FGuid::NewGuid();
+
         const FGameplayTag InsultTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Event.Social.Insult"), false);
         if (!InsultTag.IsValid())
         {
@@ -74,6 +74,7 @@ void ULWAgentBrainComponent::TickComponent(float DeltaTime, ELevelTick TickType,
         Event.EventType = InsultTag;
         Event.Location = State.Position;
         Event.Severity = 0.15f;
+
         if (ULWEventBusSubsystem* EventBus = GetWorld()->GetSubsystem<ULWEventBusSubsystem>())
         {
             EventBus->RaiseEvent(Event);

@@ -1,5 +1,9 @@
 name: "CI Failure"
 description: "CI/CD échoue, merge bloqué, permissions, checks requis"
+<<<<<<< HEAD
+=======
+description: "CI/CD échoue, merge bloqué, workflow cassé, publication échoue"
+>>>>>>> origin/main
 title: "[CI] <résumé court>"
 labels: ["ci", "bug"]
 body:
@@ -56,6 +60,14 @@ body:
         - "publish/package échoue"
         - "webhook KO"
         - "Autre"
+<<<<<<< HEAD
+=======
+        - "merge bloqué"
+        - "push refusé"
+        - "publish package échoue"
+        - "webhook KO"
+        - "autre"
+>>>>>>> origin/main
     validations:
       required: true
 
@@ -68,6 +80,11 @@ body:
         - "débloquer le merge"
         - "corriger permissions/token"
         - "publier une release/package"
+<<<<<<< HEAD
+=======
+        - "publier une release"
+        - "corriger un build"
+>>>>>>> origin/main
         - "autre"
     validations:
       required: true
@@ -93,6 +110,11 @@ body:
     attributes:
       label: Run ID (GitHub Actions)
       placeholder: "1234567890"
+<<<<<<< HEAD
+=======
+      label: Run ID (Actions)
+      placeholder: "ex: 1234567890"
+>>>>>>> origin/main
     validations:
       required: true
 
@@ -101,6 +123,10 @@ body:
     attributes:
       label: Workflow
       placeholder: ".github/workflows/diagnostics.yml"
+<<<<<<< HEAD
+=======
+      placeholder: "diagnostics.yml / build.yml / etc."
+>>>>>>> origin/main
     validations:
       required: true
 
@@ -109,6 +135,10 @@ body:
     attributes:
       label: Job/Step en échec
       placeholder: "job: validate / step: Validate repo (Linux)"
+<<<<<<< HEAD
+=======
+      placeholder: "job: build-win64 / step: Build"
+>>>>>>> origin/main
     validations:
       required: true
 
@@ -125,6 +155,34 @@ body:
       required: true
 
   - type: input
+<<<<<<< HEAD
+=======
+    id: runner_arch
+    attributes:
+      label: Architecture
+      placeholder: "x64 / arm64"
+    validations:
+      required: false
+
+  - type: input
+    id: unreal_version
+    attributes:
+      label: Unreal Engine version
+      placeholder: "5.3 / 5.4 / 5.5..."
+    validations:
+      required: false
+
+  - type: input
+    id: toolchain
+    attributes:
+      label: Toolchain
+      description: "VS/Clang/DotNet/Python versions"
+      placeholder: "VS 2022, DotNet 8.x, Python 3.11..."
+    validations:
+      required: false
+
+  - type: input
+>>>>>>> origin/main
     id: matrix_key
     attributes:
       label: Matrix key (si applicable)
@@ -137,6 +195,11 @@ body:
     attributes:
       label: Extrait log (10–40 lignes)
       description: "Colle la partie la plus utile."
+<<<<<<< HEAD
+=======
+      label: Extrait log (10–30 lignes)
+      description: "Coller uniquement la partie la plus utile"
+>>>>>>> origin/main
       render: text
     validations:
       required: true
@@ -145,6 +208,10 @@ body:
     id: local_repro
     attributes:
       label: Reproduction locale
+<<<<<<< HEAD
+=======
+      label: Repro locale
+>>>>>>> origin/main
       options:
         - "OK"
         - "KO"
@@ -158,6 +225,21 @@ body:
       label: Commande locale (si applicable)
       render: text
       placeholder: ".\\Scripts\\build_and_run.ps1 -Target editor"
+<<<<<<< HEAD
+=======
+
+      label: Commande locale
+      placeholder: ".\\Scripts\\build_and_run.ps1 -Target editor"
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: local_logs
+    attributes:
+      label: Logs locaux (extrait)
+      render: text
+>>>>>>> origin/main
     validations:
       required: false
 
@@ -165,6 +247,10 @@ body:
     id: caches
     attributes:
       label: Cache CI utilisé
+<<<<<<< HEAD
+=======
+      label: Cache utilisé
+>>>>>>> origin/main
       options:
         - "aucun"
         - "pip"
@@ -189,6 +275,34 @@ body:
     id: actions_perm
     attributes:
       label: Workflow permissions (Settings > Actions > General)
+<<<<<<< HEAD
+=======
+    id: lfs_enabled
+    attributes:
+      label: Git LFS activé
+      options:
+        - "oui"
+        - "non"
+        - "inconnu"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: lfs_pulled
+    attributes:
+      label: Git LFS téléchargé (git lfs pull)
+      options:
+        - "oui"
+        - "non"
+        - "inconnu"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: actions_perm
+    attributes:
+      label: Workflow permissions (Actions > General)
+>>>>>>> origin/main
       options:
         - "read-only"
         - "read-write"
@@ -200,6 +314,10 @@ body:
     id: token_type
     attributes:
       label: Token utilisé (si publish/push)
+<<<<<<< HEAD
+=======
+      label: Token utilisé
+>>>>>>> origin/main
       placeholder: "GITHUB_TOKEN | PAT fine-grained | PAT classic | GitHub App"
     validations:
       required: false
@@ -234,3 +352,29 @@ body:
         - "inconnu"
     validations:
       required: true
+<<<<<<< HEAD
+=======
+  - type: input
+    id: dependabot
+    attributes:
+      label: Dependabot alerts (N)
+      placeholder: "0"
+    validations:
+      required: false
+
+  - type: input
+    id: code_scanning
+    attributes:
+      label: Code scanning alerts (N)
+      placeholder: "0"
+    validations:
+      required: false
+
+  - type: input
+    id: secret_scanning
+    attributes:
+      label: Secret scanning alerts (N)
+      placeholder: "0"
+    validations:
+      required: false
+>>>>>>> origin/main

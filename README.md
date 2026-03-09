@@ -1,50 +1,113 @@
+<<<<<<< HEAD
 # LivingWorldMMO
 
-LivingWorldMMO is an Unreal Engine 5 TPS/MMO MVP focused on a server-driven living world simulation.
+Unreal Engine 5 experimental living-world simulation.
 
-## Overview
+## Features
 
-- Server-side Director orchestrates economy/conflict world events
-- Agent systems use LOD-aware AI updates
-- World state persists snapshots and event journal data
-- ReplicationGraph optimizes network relevancy at scale
-- Offline deterministic bridge (ELI/MLE) supports content simulation pipelines
+- Director AI controlling world events
+- NPC memory system
+- Spawn budget and anti-chaos controls
+- ReplicationGraph optimized networking
+- Offline deterministic simulation bridge (ELI)
 
-## Repository Structure
+## Project Structure
 
-- `Source/LivingWorldMMO/` — UE5 C++ module and runtime subsystems
-- `Config/` — engine/game defaults and gameplay tags
-- `Data/` — world/myth state JSONs and journals
-- `Scripts/` — build/run helpers, validation, ELI/MLE bridge
-- `Docs/` — architecture and integration documentation
+Source/LivingWorldMMO/      -> Unreal Engine C++ code  
+Scripts/                    -> Python + build scripts  
+Data/                       -> JSON world state and mythological data  
+Docs/                       -> design and architecture documentation  
 
-## Build and Run
+## Quick Start
 
-### Linux
+Linux:
+=======
+# LivingWorldMMO MVP
+
+Unreal Engine 5 MVP d'un monde vivant (TPS/MMO) avec Director serveur, LOD IA multi-résolution,
+persistance Snapshot+Journal et ReplicationGraph.
+
+## Quickstart Linux
+Unreal Engine 5 MVP d'un monde vivant (TPS/MMO) avec Director serveur, LOD IA multi-résolution, persistance Snapshot+Journal et ReplicationGraph.
+
+## Quickstart Linux
+>>>>>>> origin/main
 
 ```bash
 export UE_ROOT=/opt/UnrealEngine-5.3
 bash Scripts/validate_mvp.sh
 bash Scripts/build_and_run.sh --target editor
+<<<<<<< HEAD
 ```
 
-### Windows (PowerShell)
+Windows:
 
 ```powershell
-$env:UE_ROOT = "C:\UnrealEngine-5.3"
+$env:UE_ROOT="C:\UnrealEngine-5.3"
 pwsh Scripts/build_and_run.ps1 -Target editor
+=======
+Quickstart Windows (PowerShell 7)
+$env:UE_ROOT = 'C:\UnrealEngine-5.3'
+bash Scripts/validate_mvp.sh
+pwsh ./Scripts/build_and_run.ps1 -Target editor
+Validation
+bash Scripts/validate_mvp.sh
+Build targets
+
+editor
+
+game
+
+server
+
+ELI Bridge (Python)
+python3 Scripts/eli_bridge/eli.py
+
+Doc: Docs/ELI_Bridge_Integration_FR.md.
+
+Living World + MLE (offline)
+
+Le pipeline déterministe offline est fourni dans Scripts/eli_bridge/mle_living_world.py et s'appuie sur les données JSON sous Data/LivingMytho/ et Data/LivingWorld/ (schéma versionné + journaux append-only).
+
+python3 Scripts/eli_bridge/mle_living_world.py
+
 ```
 
-## Minimal Usage Examples
+## Quickstart Windows (PowerShell 7)
 
-### Run repository diagnostics
+```powershell
+$env:UE_ROOT = 'C:\UnrealEngine-5.3'
+bash Scripts/validate_mvp.sh
+pwsh ./Scripts/build_and_run.ps1 -Target editor
+```
+
+## Validation
 
 ```bash
-bash Scripts/ci/validate_repo.sh
+bash Scripts/validate_mvp.sh
 ```
 
-### Run offline deterministic director check
+## Build targets
+
+- `editor`
+- `game`
+- `server`
+
+
+## ELI Bridge (Python)
+
+```bash
+python3 Scripts/eli_bridge/eli.py
+```
+
+Doc: `Docs/ELI_Bridge_Integration_FR.md`.
+
+## Living World + MLE (offline)
+
+Le pipeline déterministe offline est fourni dans `Scripts/eli_bridge/mle_living_world.py` et s'appuie sur les données JSON sous `Data/LivingMytho/` et `Data/LivingWorld/` (schéma versionné + journaux append-only).
 
 ```bash
 python3 Scripts/eli_bridge/mle_living_world.py
+```
+>>>>>>> origin/main
 ```

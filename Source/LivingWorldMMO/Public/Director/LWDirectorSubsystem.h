@@ -10,6 +10,14 @@ struct FLWWorldEvent;
 #include "LWDirectorSubsystem.generated.h"
 
 UCLASS(Config=Game, DefaultConfig)
+<<<<<<< HEAD
+=======
+#include "Subsystems/WorldSubsystem.h"
+#include "WorldState/LWTypes.h"
+#include "LWDirectorSubsystem.generated.h"
+
+UCLASS()
+>>>>>>> origin/main
 class LIVINGWORLDMMO_API ULWDirectorSubsystem : public UTickableWorldSubsystem
 {
     GENERATED_BODY()
@@ -58,6 +66,12 @@ private:
     FGameplayTag PriceUpdateTag;
     FGameplayTag BanditRaidTag;
 
+<<<<<<< HEAD
+=======
+    UPROPERTY()
+    TMap<FName, FLWZoneBudget> Budgets;
+
+>>>>>>> origin/main
     float EconomyAccumulator = 0.0f;
     float ConflictAccumulator = 0.0f;
 };
