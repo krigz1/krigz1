@@ -5,7 +5,8 @@ $RootDir = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 Write-Host "[validate_repo.ps1] scanning unicode..."
 python "$RootDir\Scripts\ci\scan_bidi_unicode.py" "$RootDir" --extensions ".json,.jsonl,.md,.txt,.yml,.yaml"
 
-Write-Host "[validate_repo.ps1] validating JSON/JSONL..."
+Write-Host "[validate_repo.ps1] JSON parse check..."
+
 $fail = $false
 
 function Test-JsonFile([string]$path) {
@@ -29,7 +30,7 @@ function Test-JsonlFile([string]$path) {
       try {
         $null = $trim | ConvertFrom-Json
       } catch {
-        Write-Host "[JSONL ERROR] $path:$i : $($_.Exception.Message)"
+        Write-Host "[JSONL ERROR] ${path}:$i : $($_.Exception.Message)"
         $script:fail = $true
       }
     }

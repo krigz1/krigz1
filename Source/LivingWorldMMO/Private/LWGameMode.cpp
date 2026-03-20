@@ -1,12 +1,12 @@
 #include "LWGameMode.h"
 
 #include "Agents/LWAgentBrainComponent.h"
+#include "Director/LWDirectorSubsystem.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Events/LWEventBusSubsystem.h"
 #include "GameFramework/Actor.h"
 #include "WorldState/LWWorldStateSubsystem.h"
-#include "Director/LWDirectorSubsystem.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogLWGameMode, Log, All);
 

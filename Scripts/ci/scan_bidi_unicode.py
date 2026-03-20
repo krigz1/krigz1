@@ -8,7 +8,8 @@ IGNORED_DIRS = {".git", "__pycache__", "node_modules", ".venv", "venv"}
 BIDI = set(range(0x202A, 0x202F)) | set(range(0x2066, 0x206A))
 ZERO_WIDTH = {0x200B, 0x200C, 0x200D, 0x200E, 0x200F, 0xFEFF}
 
-def scan_file(path: str):
+
+def scan_file(path: str) -> list:
     issues = []
     try:
         with open(path, "r", encoding="utf-8", errors="replace") as f:
@@ -25,6 +26,7 @@ def scan_file(path: str):
             issues.append(f"{kind} U+{cp:04X} line {line} col {col}")
 
     return issues
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -50,10 +52,11 @@ def main():
                 for it in issues[:50]:
                     print(f"  - {it}")
                 if len(issues) > 50:
-                    print(f"  - ... ({len(issues)-50} more)")
+                    print(f"  - ... ({len(issues) - 50} more)")
 
     if any_fail:
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

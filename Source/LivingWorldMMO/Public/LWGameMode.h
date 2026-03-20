@@ -1,8 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
 #include "Events/LWEventBusSubsystem.h"
+#include "GameFramework/GameModeBase.h"
 #include "LWGameMode.generated.h"
 
 UCLASS(Config=Game)

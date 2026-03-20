@@ -1,7 +1,44 @@
 {
   "schema_version": 1,
-  "updated_ts": null,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-03-04T18:31:41Z",
+  "world_seed": "0x1A2B3C4D5E6F7788",
+
   "world_flags": {},
   "active_events": [],
-  "npc_memory": []
+  "npc_memory": [],
+
+  "director": {
+    "mode": "normal",
+    "last_tick_ts": "2026-03-04T18:31:41Z",
+    "global_anti_spam": {
+      "token_bucket": {
+        "capacity": 30,
+        "refill_per_min": 6,
+        "tokens": 29.0,
+        "_last_refill": 1760000000
+      },
+      "legendary_bucket": {
+        "capacity": 3,
+        "refill_per_hour": 0.5,
+        "tokens": 3
+      }
+    }
+  },
+
+  "zone_metrics": {
+    "default_zone": {
+      "activity_score_ema": 0.196,
+      "death_rate_ema": 0.098,
+      "noise_score_ema": 0.098,
+      "economy_scarcity_ema": 0.196,
+      "conflict_score_ema": 0.147,
+      "crime_score_ema": 0.098
+    }
+  },
+
+  "selection_memory": {
+    "recent_uniqueness_hashes": [],
+    "recent_mythology_picks": []
+  }
 }
