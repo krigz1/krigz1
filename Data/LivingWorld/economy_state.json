@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "zones": {
+    "default_zone": {
+      "market_scarcity": 0.2,
+      "price_index": 1.0,
+      "signals": {"crafting_shortage": 0.0, "food_shortage": 0.0}
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "territories": {
+    "default_zone": {
+      "owner": "wardens",
+      "taxes": {"market_tax": 0.05, "travel_toll": 0.0},
+      "siege_windows": [{"dow": 6, "start_utc": "20:00", "duration_min": 120}],
+      "world_signals": {"conflict_score": 0.1, "crime_score": 0.1}
+    }
+  }
+}

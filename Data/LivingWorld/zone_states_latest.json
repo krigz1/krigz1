@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-03-04T18:31:41Z",
+  "zone_states": {
+    "default_zone": {
+      "fog_frequency": 0.2,
+      "corruption_level": 0.1,
+      "economy_modifiers": {
+        "price_mul": 1.0,
+        "craft_speed_mul": 1.0
+      },
+      "ecology_populations": {
+        "wolf_stalker": {
+          "count": 120,
+          "trend": "stable"
+        }
+      },
+      "myth_pressure": {
+        "thorn_covenant": 0.39
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "world_id": "livingworldmmo_offline",
+  "updated_ts": "2026-01-01T00:00:00Z",
+  "tables": {
+    "common": [{"item_id": "mat_hide", "weight": 70}, {"item_id": "mat_bone", "weight": 30}],
+    "rare": [{"item_id": "sigil_ash", "weight": 60}, {"item_id": "core_hunt", "weight": 40}],
+    "legendary": [{"item_id": "relic_thorn_heart", "weight": 100}]
+  }
+}
