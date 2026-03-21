@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Events/LWEventBusSubsystem.h"
 #include "WorldState/LWTypes.h"
 #include "LWAgentBrainComponent.generated.h"
 
@@ -33,11 +34,25 @@ public:
     FLWAgentRuntimeState BuildRuntimeState() const;
 
 private:
+    UFUNCTION()
+    void HandleWorldEvent(const FLWWorldEvent& EventData);
+
+    void ApplyBanditRaidReaction(const FLWWorldEvent& EventData);
+    void ApplyEconomyReaction(const FLWWorldEvent& EventData);
+    void ApplyWildlifeReaction(const FLWWorldEvent& EventData);
+    void MoveAwayFrom(const FVector& SourceLocation, float Distance);
+
     UPROPERTY()
     FGuid AgentId;
 
     UPROPERTY()
     ELWAgentLOD CurrentLOD = ELWAgentLOD::Macro;
+
+    UPROPERTY()
+    FName DebugState = TEXT("Idle");
+
+    UPROPERTY()
+    FGuid LastHandledEventId;
 
     float Accumulator = 0.0f;
 };

@@ -43,7 +43,16 @@ public:
     UFUNCTION(BlueprintCallable)
     void DrainRecentEvents(TArray<FLWWorldEvent>& OutEvents);
 
+    UFUNCTION(BlueprintCallable)
+    void GetRecentEvents(TArray<FLWWorldEvent>& OutEvents) const;
+
+    UFUNCTION(BlueprintPure)
+    int32 GetRecentEventCount() const { return RecentEvents.Num(); }
+
 private:
     UPROPERTY()
     TArray<FLWWorldEvent> RecentEvents;
+
+    UPROPERTY(EditDefaultsOnly, Category="LivingWorld")
+    int32 MaxRecentEvents = 32;
 };

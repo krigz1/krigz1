@@ -2,8 +2,9 @@
 
 #include "Events/LWEventBusSubsystem.h"
 #include "GameplayTagsManager.h"
-
 #include "WorldState/LWWorldStateSubsystem.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogLWDirector, Log, All);
 
 void ULWDirectorSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -25,6 +26,7 @@ void ULWDirectorSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     const UGameplayTagsManager& TagsManager = UGameplayTagsManager::Get();
     PriceUpdateTag = TagsManager.RequestGameplayTag(TEXT("Event.Economy.PriceUpdate"), false);
     BanditRaidTag = TagsManager.RequestGameplayTag(TEXT("Event.Conflict.BanditRaid"), false);
+    WildlifeDisturbanceTag = TagsManager.RequestGameplayTag(TEXT("Event.Wildlife.Disturbance"), false);
 }
 
 void ULWDirectorSubsystem::Tick(float DeltaTime)
@@ -37,22 +39,24 @@ void ULWDirectorSubsystem::Tick(float DeltaTime)
 
     EconomyAccumulator += DeltaTime;
     ConflictAccumulator += DeltaTime;
+    WildlifeAccumulator += DeltaTime;
 
-    if (EconomyAccumulator > EconomyIntervalSeconds)
-    EconomyAccumulator += DeltaTime;
-    ConflictAccumulator += DeltaTime;
-
-    if (EconomyAccumulator > 5.0f)
+    if (EconomyAccumulator >= EconomyIntervalSeconds)
     {
         EconomyAccumulator = 0.0f;
         RunEconomyPass();
     }
 
-    if (ConflictAccumulator > ConflictIntervalSeconds)
-    if (ConflictAccumulator > 15.0f)
+    if (ConflictAccumulator >= ConflictIntervalSeconds)
     {
         ConflictAccumulator = 0.0f;
         RunConflictPass();
+    }
+
+    if (WildlifeAccumulator >= WildlifeIntervalSeconds)
+    {
+        WildlifeAccumulator = 0.0f;
+        RunWildlifePass();
     }
 
     RunEntropyControlPass();
@@ -68,6 +72,11 @@ void ULWDirectorSubsystem::SetZoneBudget(const FLWZoneBudget& Budget)
     Budgets.Add(Budget.ZoneId, Budget);
 }
 
+FString ULWDirectorSubsystem::GetDirectorStatus() const
+{
+    return LastDirectorDecision;
+}
+
 bool ULWDirectorSubsystem::ValidateAgainstCodeElisabeth(const FLWWorldEvent& CandidateEvent, FString& OutReason) const
 {
     if (!bCodeElisabethEnabled)
@@ -75,23 +84,21 @@ bool ULWDirectorSubsystem::ValidateAgainstCodeElisabeth(const FLWWorldEvent& Can
         return true;
     }
 
-    // R3/R6/R10/R11/R400: sécurité + cohérence + stabilité avant tout.
     if (!CandidateEvent.EventType.IsValid())
     {
-        OutReason = TEXT("Rejected by Code Elisabeth: missing event gameplay tag.");
+        OutReason = TEXT("Rejected: missing event gameplay tag");
         return false;
     }
 
     if (CandidateEvent.Severity < 0.0f || CandidateEvent.Severity > 1.0f)
     {
-        OutReason = TEXT("Rejected by Code Elisabeth: severity must stay in [0..1].");
+        OutReason = TEXT("Rejected: severity must stay in [0..1]");
         return false;
     }
 
-    // R426/R427/R431: action majeure => validation explicite du Créateur.
     if (RequiresCreatorValidation(CandidateEvent))
     {
-        OutReason = TEXT("Blocked by Code Elisabeth: major event requires creator validation.");
+        OutReason = TEXT("Rejected: major event requires creator validation");
         return false;
     }
 
@@ -103,48 +110,65 @@ bool ULWDirectorSubsystem::RequiresCreatorValidation(const FLWWorldEvent& Candid
     return CandidateEvent.Severity >= MaxAutonomousSeverity;
 }
 
+bool ULWDirectorSubsystem::EmitDirectorEvent(FLWWorldEvent& Event, const FString& AcceptedMessage, const FString& RejectedMessagePrefix)
+{
+    FString RejectReason;
+    if (!ValidateAgainstCodeElisabeth(Event, RejectReason))
+    {
+        LastDirectorDecision = RejectReason;
+        UE_LOG(LogLWDirector, Warning, TEXT("LW.Director rejected type=%s reason=%s"), *Event.EventType.ToString(), *RejectReason);
+        if (ULWWorldStateSubsystem* WorldState = GetWorld()->GetSubsystem<ULWWorldStateSubsystem>())
+        {
+            WorldState->WriteEventJournal(FString::Printf(TEXT("%s %s"), *RejectedMessagePrefix, *RejectReason));
+        }
+        return false;
+    }
+
+    if (ULWEventBusSubsystem* EventBus = GetWorld()->GetSubsystem<ULWEventBusSubsystem>())
+    {
+        EventBus->RaiseEvent(Event);
+    }
+
+    LastDirectorDecision = AcceptedMessage;
+    UE_LOG(LogLWDirector, Log, TEXT("LW.Director accepted id=%s type=%s severity=%.2f"),
+        *Event.EventId.ToString(EGuidFormats::DigitsWithHyphensLower),
+        *Event.EventType.ToString(),
+        Event.Severity);
+    if (ULWWorldStateSubsystem* WorldState = GetWorld()->GetSubsystem<ULWWorldStateSubsystem>())
+    {
+        WorldState->WriteEventJournal(AcceptedMessage);
+    }
+
+    return true;
+}
+
 void ULWDirectorSubsystem::RunEconomyPass()
 {
     if (!PriceUpdateTag.IsValid())
     {
-        UE_LOG(LogTemp, Warning, TEXT("LWDirector: missing gameplay tag Event.Economy.PriceUpdate, skipping economy pass."));
+        UE_LOG(LogLWDirector, Warning, TEXT("LW.Director missing gameplay tag Event.Economy.PriceUpdate, skipping economy pass."));
+        LastDirectorDecision = TEXT("EconomySkippedMissingTag");
         return;
     }
 
     FLWWorldEvent Event;
     Event.EventId = FGuid::NewGuid();
     Event.EventType = PriceUpdateTag;
-    Event.Severity = 0.3f;
-    Event.Scalars.Add(TEXT("FoodPriceDelta"), RandomStream.FRandRange(-0.03f, 0.07f));
+    Event.Severity = 0.30f;
+    Event.Location = FVector::ZeroVector;
+    Event.Scalars.Add(TEXT("FoodPriceDelta"), RandomStream.FRandRange(-0.10f, 0.10f));
 
-    FString RejectReason;
-    if (!ValidateAgainstCodeElisabeth(Event, RejectReason))
-    {
-        if (ULWWorldStateSubsystem* WorldState = GetWorld()->GetSubsystem<ULWWorldStateSubsystem>())
-        {
-            WorldState->WriteEventJournal(RejectReason);
-        }
-        return;
-    }
-void ULWDirectorSubsystem::RunEconomyPass()
-{
-    FLWWorldEvent Event;
-    Event.EventId = FGuid::NewGuid();
-    Event.EventType = FGameplayTag::RequestGameplayTag(TEXT("Event.Economy.PriceUpdate"));
-    Event.Severity = 0.3f;
-    Event.Scalars.Add(TEXT("FoodPriceDelta"), FMath::FRandRange(-0.03f, 0.07f));
-
-    if (ULWEventBusSubsystem* EventBus = GetWorld()->GetSubsystem<ULWEventBusSubsystem>())
-    {
-        EventBus->RaiseEvent(Event);
-    }
+    EmitDirectorEvent(Event,
+        FString::Printf(TEXT("Director accepted economy update delta=%.2f"), Event.Scalars[TEXT("FoodPriceDelta")]),
+        TEXT("Director rejected economy update:"));
 }
 
 void ULWDirectorSubsystem::RunConflictPass()
 {
     if (!BanditRaidTag.IsValid())
     {
-        UE_LOG(LogTemp, Warning, TEXT("LWDirector: missing gameplay tag Event.Conflict.BanditRaid, skipping conflict pass."));
+        UE_LOG(LogLWDirector, Warning, TEXT("LW.Director missing gameplay tag Event.Conflict.BanditRaid, skipping conflict pass."));
+        LastDirectorDecision = TEXT("ConflictSkippedMissingTag");
         return;
     }
 
@@ -152,39 +176,35 @@ void ULWDirectorSubsystem::RunConflictPass()
     Event.EventId = FGuid::NewGuid();
     Event.EventType = BanditRaidTag;
     Event.Location = BanditRaidLocation;
-    Event.Severity = 0.8f;
+    Event.Severity = 0.80f;
 
-    FString RejectReason;
-    if (!ValidateAgainstCodeElisabeth(Event, RejectReason))
+    EmitDirectorEvent(Event,
+        TEXT("Director accepted bandit raid near south gate"),
+        TEXT("Director rejected bandit raid:"));
+}
+
+void ULWDirectorSubsystem::RunWildlifePass()
+{
+    if (!WildlifeDisturbanceTag.IsValid())
     {
-        if (ULWWorldStateSubsystem* WorldState = GetWorld()->GetSubsystem<ULWWorldStateSubsystem>())
-        {
-            WorldState->WriteEventJournal(RejectReason);
-        }
+        UE_LOG(LogLWDirector, Warning, TEXT("LW.Director missing gameplay tag Event.Wildlife.Disturbance, skipping wildlife pass."));
+        LastDirectorDecision = TEXT("WildlifeSkippedMissingTag");
         return;
     }
 
     FLWWorldEvent Event;
     Event.EventId = FGuid::NewGuid();
-    Event.EventType = FGameplayTag::RequestGameplayTag(TEXT("Event.Conflict.BanditRaid"));
-    Event.Location = FVector(4200.0f, -1800.0f, 0.0f);
-    Event.Severity = 0.8f;
+    Event.EventType = WildlifeDisturbanceTag;
+    Event.Location = WildlifeDisturbanceLocation;
+    Event.Severity = 0.45f;
+    Event.Scalars.Add(TEXT("MigrationDistance"), RandomStream.FRandRange(300.0f, 900.0f));
 
-    if (ULWEventBusSubsystem* EventBus = GetWorld()->GetSubsystem<ULWEventBusSubsystem>())
-    {
-        EventBus->RaiseEvent(Event);
-    }
-
-    if (ULWWorldStateSubsystem* WorldState = GetWorld()->GetSubsystem<ULWWorldStateSubsystem>())
-    {
-        WorldState->WriteEventJournal(TEXT("Bandit raid triggered near South Gate."));
-    }
+    EmitDirectorEvent(Event,
+        TEXT("Director accepted wildlife disturbance in valley wildlands"),
+        TEXT("Director rejected wildlife disturbance:"));
 }
 
 void ULWDirectorSubsystem::RunEntropyControlPass()
 {
-    // Anti-entropie (Code Elisabeth R8/R47/R56/R355):
-    // mécanisme MVP pour contenir la dérive du monde avant déséquilibre irréversible.
-    // Anti-entropie: mécanisme minimal pour éviter l'emballement de l'état.
-    // En production MMO: clamps réputation/économie + régulateurs par région.
+    // WorldProof_SmallScale: explicit no-op anti-entropy hook kept to preserve architecture.
 }

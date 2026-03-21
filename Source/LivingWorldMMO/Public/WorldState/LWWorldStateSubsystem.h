@@ -2,14 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
+#include "Events/LWEventBusSubsystem.h"
 #include "WorldState/LWTypes.h"
 #include "LWWorldStateSubsystem.generated.h"
 
 UCLASS(Config=Game, DefaultConfig)
-<<<<<<< HEAD
-=======
-UCLASS()
->>>>>>> origin/main
 class LIVINGWORLDMMO_API ULWWorldStateSubsystem : public UWorldSubsystem
 {
     GENERATED_BODY()
@@ -31,6 +28,9 @@ public:
     void WriteEventJournal(const FString& EventLine);
 
     UFUNCTION(BlueprintCallable)
+    void RecordWorldEvent(const FLWWorldEvent& EventData);
+
+    UFUNCTION(BlueprintCallable)
     void SaveSnapshot();
 
     UFUNCTION(BlueprintCallable)
@@ -38,6 +38,15 @@ public:
 
     UFUNCTION(BlueprintCallable)
     FLWWorldSnapshot BuildSnapshot() const;
+
+    UFUNCTION(BlueprintPure)
+    int32 GetTrackedAgentCount() const { return AgentStates.Num(); }
+
+    UFUNCTION(BlueprintPure)
+    FString GetLastPersistenceStatus() const { return LastPersistenceStatus; }
+
+    UFUNCTION(BlueprintPure)
+    int32 GetRecentJournalCount() const { return EventJournal.Num(); }
 
 private:
     UPROPERTY()
@@ -53,4 +62,7 @@ private:
 
     UPROPERTY(EditAnywhere, Config, Category="LivingWorld|Persistence")
     FString SaveSlotName = TEXT("LivingWorld_MVP");
+
+    UPROPERTY()
+    FString LastPersistenceStatus = TEXT("NotSavedYet");
 };
